@@ -1,0 +1,74 @@
+[
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/mipmap-xxhdpi_launch_image_land.png.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/mipmap-xxhdpi/launch_image_land.png"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/mipmap-xxxhdpi_launch_image.png.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/mipmap-xxxhdpi/launch_image.png"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/mipmap-xhdpi_launch_image_land.png.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/mipmap-xhdpi/launch_image_land.png"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/drawable_splash_screen_land.xml.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/drawable/splash_screen_land.xml"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/xml_provider_path.xml.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/xml/provider_path.xml"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/mipmap-xxhdpi_launch_image.png.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/mipmap-xxhdpi/launch_image.png"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/mipmap-hdpi_launch_image.png.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/mipmap-hdpi/launch_image.png"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/drawable_launch_background.xml.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/drawable/launch_background.xml"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/mipmap-mdpi_launch_image_land.png.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/mipmap-mdpi/launch_image_land.png"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/mipmap-hdpi_launch_image_land.png.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/mipmap-hdpi/launch_image_land.png"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/mipmap-mdpi_launch_image.png.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/mipmap-mdpi/launch_image.png"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/mipmap-xhdpi_launch_image.png.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/mipmap-xhdpi/launch_image.png"
+    },
+    {
+        "merged": "com.syncfusion.flutter_examples.app-merged_res-12:/mipmap-xxxhdpi_launch_image_land.png.flat",
+        "source": "com.syncfusion.flutter_examples.app-main-6:/mipmap-xxxhdpi/launch_image_land.png"
+    }
+]

@@ -4,12 +4,12 @@ import 'dart:math';
 ///Package imports
 import 'package:flutter/material.dart';
 
-///calendar import
-import 'package:syncfusion_flutter_calendar/calendar.dart';
-
 /// core import
 // ignore: depend_on_referenced_packages
 import 'package:syncfusion_flutter_core/core.dart';
+
+///calendar import
+import '../../calendar.dart';
 
 ///Local import
 import '../../model/sample_view.dart';

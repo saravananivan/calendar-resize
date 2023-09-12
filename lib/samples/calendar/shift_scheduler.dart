@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 ///calendar import
-import 'package:syncfusion_flutter_calendar/calendar.dart';
+import '../../calendar.dart';
 
 ///Local import
 import '../../model/sample_view.dart';
@@ -528,6 +528,8 @@ class _ShiftSchedulerState extends SampleViewState {
       dataSource: calendarDataSource,
       onViewChanged: viewChangedCallback,
       onTap: calendarTapCallback,
+      allowDragAndDrop: true,
+      allowAppointmentResize: true,
     );
   }
 }

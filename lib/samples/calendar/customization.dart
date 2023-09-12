@@ -7,7 +7,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 ///calendar import
-import 'package:syncfusion_flutter_calendar/calendar.dart';
+import '../../calendar.dart';
 
 ///Local import
 import '../../model/sample_view.dart';

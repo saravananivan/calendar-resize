@@ -5,7 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 ///calendar import
-import 'package:syncfusion_flutter_calendar/calendar.dart';
+import '../../calendar.dart';
 
 ///Local import
 import '../../model/sample_view.dart';
