@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:syncfusion_flutter_core/core.dart';
@@ -38,6 +39,7 @@ class AppointmentLayout extends StatefulWidget {
       this.height,
       this.localizations,
       this.updateCalendarState,
+      this.onTap,
       {Key? key})
       : super(key: key);
 
@@ -92,6 +94,8 @@ class AppointmentLayout extends StatefulWidget {
 
   /// Holds the visible appointment collection of the calendar widget.
   final ValueNotifier<List<CalendarAppointment>?> visibleAppointments;
+
+  final VoidCallback? onTap;
 
   /// Return the appointment view based on x and y position.
   AppointmentView? getAppointmentViewOnPoint(double x, double y) {
@@ -299,6 +303,7 @@ class _AppointmentLayoutState extends State<AppointmentLayout> {
         _indexAppointments,
         _monthAppointmentCountViews,
         _weekNumberPanelWidth,
+        widget.onTap,
         widgets: _children);
   }
 
@@ -1118,6 +1123,7 @@ class _AppointmentRenderWidget extends MultiChildRenderObjectWidget {
       this.indexAppointments,
       this.monthAppointmentCountViews,
       this.weekNumberPanelWidth,
+      this.onTap,
       {List<Widget> widgets = const <Widget>[]})
       : super(children: widgets);
 
@@ -1141,6 +1147,7 @@ class _AppointmentRenderWidget extends MultiChildRenderObjectWidget {
   final List<AppointmentView> appointmentCollection;
   final Map<int, List<AppointmentView>> indexAppointments;
   final Map<int, RRect> monthAppointmentCountViews;
+  final VoidCallback? onTap;
 
   @override
   _AppointmentRenderObject createRenderObject(BuildContext context) {
@@ -1164,7 +1171,8 @@ class _AppointmentRenderWidget extends MultiChildRenderObjectWidget {
         appointmentCollection,
         indexAppointments,
         monthAppointmentCountViews,
-        weekNumberPanelWidth);
+        weekNumberPanelWidth,
+        onTap);
   }
 
   @override
@@ -1215,7 +1223,8 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
       this.appointmentCollection,
       this.indexAppointments,
       this.monthAppointmentCountViews,
-      this._weekNumberPanelWidth);
+      this._weekNumberPanelWidth,
+      this._onTap);
 
   List<CalendarAppointment>? _visibleAppointments;
 
@@ -1446,11 +1455,34 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
     markNeedsLayout();
   }
 
+  late Path? reSizePath;
+
+  TapGestureRecognizer? _tapGestureRecognizer;
+
+  VoidCallback? _onTap;
+  VoidCallback? get onTap => _onTap;
+  set onTap(value) {
+    if (_onTap == value) {
+      return;
+    }
+    _onTap = value;
+    _tapGestureRecognizer?.onTap = value;
+  }
+
+  @override
+  bool hitTestSelf(Offset position) {
+    super.hitTestSelf(position);
+    return reSizePath!.contains(position);
+  }
+
   /// attach will called when the render object rendered in view.
   @override
   void attach(PipelineOwner owner) {
     super.attach(owner);
     _appointmentHoverPosition.addListener(markNeedsPaint);
+
+    _tapGestureRecognizer = TapGestureRecognizer(debugOwner: this)
+      ..onTap = _onTap;
   }
 
   /// detach will called when the render object removed from view.
@@ -1532,6 +1564,14 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
   }
 
   @override
+  void handleEvent(PointerEvent event, HitTestEntry entry) {
+    assert(debugHandleEvent(event, entry));
+    if (event is PointerDownEvent) {
+      _tapGestureRecognizer?.addPointer(event);
+    }
+  }
+
+  @override
   bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
     RenderBox? child = firstChild;
     if (child == null) {
@@ -1545,7 +1585,6 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
           appointmentView.appointmentRect == null) {
         continue;
       }
-
       final Offset offset = Offset(appointmentView.appointmentRect!.left,
           appointmentView.appointmentRect!.top);
       final bool isHit = result.addWithPaintOffset(
@@ -2404,6 +2443,7 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
   }
 
   void _drawTimelineAppointments(Canvas canvas, Size size, Paint paint) {
+    print("calling _drawTimelineAppointments..........");
     const double textStartPadding = 2;
     final bool useMobilePlatformUI =
         CalendarViewHelper.isMobileLayoutUI(size.width, isMobilePlatform);
@@ -2412,13 +2452,43 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
       if (appointmentView.canReuse ||
           appointmentView.appointmentRect == null ||
           appointmentView.appointment == null) {
+        print("calling appointmentCollection[i]..........");
         continue;
       }
 
       final CalendarAppointment appointment = appointmentView.appointment!;
       paint.color = appointment.color;
       final RRect appointmentRect = appointmentView.appointmentRect!;
+      print("calling appointmentCollection[$i]");
+      print("appointmentRect: $appointmentRect");
       canvas.drawRRect(appointmentRect, paint);
+
+      reSizePath = Path();
+
+      reSizePath!.addArc(
+          Rect.fromCenter(
+              center: Offset(appointmentRect.right,
+                  appointmentRect.bottom - (appointmentRect.width * 0.6)),
+              width: 20,
+              height: 20),
+          0,
+          2 * math.pi);
+
+      canvas.drawPath(reSizePath!, Paint()..color = Colors.black);
+      /* Remove this code
+      // canvas.drawCircle(
+      //     Offset(appointmentRect.right,
+      //         appointmentRect.bottom - (appointmentRect.width * 0.6)),
+      //     5,
+      //     paint);
+
+      */
+      canvas.drawCircle(
+          Offset(appointmentRect.left,
+              appointmentRect.top + (appointmentRect.height * 0.8)),
+          5,
+          Paint()..color = Colors.white);
+
       final bool canAddSpanIcon =
           AppointmentHelper.canAddSpanIcon(visibleDates, appointment, view);
       double forwardSpanIconSize = 0;

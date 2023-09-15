@@ -784,6 +784,7 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
       bool isResourceEnabled,
       double viewHeaderHeight,
       double timeLabelWidth) {
+    print("_handleAppointmentDragStart .............");
     final _CalendarViewState currentState = _getCurrentViewByVisibleDates()!;
     currentState._updateDraggingMouseCursor(true);
     _dragDetails.value.timeIntervalHeight = currentState._getTimeIntervalHeight(
@@ -2376,6 +2377,7 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
       double viewHeaderHeight,
       double timeLabelWidth,
       double resourceViewSize) {
+    print("handle drag start............");
     if (!CalendarViewHelper.isTimelineView(widget.view)) {
       return;
     }
@@ -4913,7 +4915,7 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
       double viewHeaderHeight,
       double timeLabelWidth,
       bool isNeedDragAndDrop) {
-    print("_onHorizontalStart ............");
+    print('_onHorizontalStart ............');
     final _CalendarViewState currentState = _getCurrentViewByVisibleDates()!;
     if (currentState._hoveringAppointmentView != null &&
         currentState._hoveringAppointmentView!.appointment != null &&
@@ -4958,7 +4960,7 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
       double weekNumberPanelWidth = 0,
       bool isNeedDragAndDrop = false]) {
     print(
-        "dddddddddd - _onHorizontalUpdate(DragUpdateDetails dragUpdateDetails, : 4950");
+        'dddddddddd - _onHorizontalUpdate(DragUpdateDetails dragUpdateDetails, : 4950');
     if (_dragDetails.value.appointmentView != null &&
         !widget.isMobilePlatform &&
         isNeedDragAndDrop) {
@@ -6571,6 +6573,12 @@ class _CalendarViewState extends State<_CalendarView>
                 _updateCalendarStateDetails.currentViewVisibleDates
             ? _updateCalendarStateDetails.visibleAppointments
             : null;
+
+    void onTap() {
+      debugPrint('===================================Resize.........');
+      debugPrint('The resize button on the canvas got tapped........');
+    }
+
     _appointmentLayout = AppointmentLayout(
       widget.calendar,
       widget.view,
@@ -6589,6 +6597,7 @@ class _CalendarViewState extends State<_CalendarView>
       height,
       widget.localizations,
       _getPainterProperties,
+      onTap,
       key: _appointmentLayoutKey,
     );
 
@@ -6682,9 +6691,9 @@ class _CalendarViewState extends State<_CalendarView>
       return;
     }
 
-    print("_onVerticalUpdate(DragUpdateDetails details) .......");
-    print("(details.delta.dx < 0) : ${(details.delta.dy < 0)}");
-    print("(details.delta.dx > 0) : ${(details.delta.dy > 0)}");
+    print('_onVerticalUpdate(DragUpdateDetails details) .......');
+    print('(details.delta.dx < 0) : ${(details.delta.dy < 0)}');
+    print('(details.delta.dx > 0) : ${(details.delta.dy > 0)}');
 
     final bool isDayView = CalendarViewHelper.isDayView(
         widget.view,
@@ -6899,7 +6908,7 @@ class _CalendarViewState extends State<_CalendarView>
   }
 
   void _onHorizontalStart(DragStartDetails details) {
-    print("_onHorizontalStart(DragStartDetails details)......");
+    print('_onHorizontalStart(DragStartDetails details)......');
     final bool isDayView = CalendarViewHelper.isDayView(
         widget.view,
         widget.calendar.timeSlotViewSettings.numberOfDaysInView,
@@ -7048,7 +7057,7 @@ class _CalendarViewState extends State<_CalendarView>
   }
 
   void _onHorizontalUpdate(DragUpdateDetails details) {
-    print("dragging...........");
+    print('dragging...........');
     if (_resizingDetails.value.appointmentView == null) {
       return;
     }
@@ -7342,7 +7351,7 @@ class _CalendarViewState extends State<_CalendarView>
   }
 
   void _onHorizontalEnd(DragEndDetails details) {
-    print("_onHorizontalEnd(DragEndDetails details)........");
+    print('_onHorizontalEnd(DragEndDetails details)........');
     if (_resizingDetails.value.appointmentView == null) {
       _resizingDetails.value.position.value = null;
       return;
@@ -8399,9 +8408,11 @@ class _CalendarViewState extends State<_CalendarView>
   }
 
   Widget _getResizeShadowView() {
-    print("_getResizeShadowView() .............");
+    print('_getResizeShadowView() .............');
     print(
-        "_getResizeShadowView() ............. : ${!widget.isMobilePlatform || !widget.calendar.allowAppointmentResize}");
+        '_getResizeShadowView() ............. : ${!widget.isMobilePlatform || !widget.calendar.allowAppointmentResize}');
+    print(
+        "widget.calendar.allowAppointmentResize: ${widget.calendar.allowAppointmentResize}");
     // if (widget.isMobilePlatform || !widget.calendar.allowAppointmentResize) {
     //   return const SizedBox(width: 0, height: 0);
     // }
@@ -8442,13 +8453,26 @@ class _CalendarViewState extends State<_CalendarView>
                 allDayPanelHeight +
                 (_timeIntervalHeight * _horizontalLinesCount!);
 
-    print("isVerticalResize: $isVerticalResize");
+    print('isVerticalResize: $isVerticalResize');
 
     print(
-        "SystemMouseCursors.basic : ${_mouseCursor == SystemMouseCursors.basic || _mouseCursor == SystemMouseCursors.move || false}");
+        'SystemMouseCursors.basic : ${_mouseCursor == SystemMouseCursors.basic || _mouseCursor == SystemMouseCursors.move || false}');
 
     print(
-        "_mouseCursor == SystemMouseCursors.move: ${_mouseCursor == SystemMouseCursors.move}");
+        '_mouseCursor == SystemMouseCursors.move: ${_mouseCursor == SystemMouseCursors.move}');
+    print(
+        "SystemMouseCursors.resizeUp: ${_mouseCursor == SystemMouseCursors.resizeUp}");
+    print(
+        "SystemMouseCursors.resizeDown : ${_mouseCursor == SystemMouseCursors.resizeDown}");
+    print(
+        "SystemMouseCursors.resizeLeft: ${_mouseCursor == SystemMouseCursors.resizeLeft} ");
+    print(
+        "SystemMouseCursors.resizeRight: ${_mouseCursor == SystemMouseCursors.resizeRight} ");
+
+    print("overAllWidth : $overAllWidth");
+    print("overAllHeight : $overAllHeight");
+
+    print("isAllDayPanel : $isAllDayPanel");
 
     return Positioned(
         left: 0,
@@ -8463,33 +8487,33 @@ class _CalendarViewState extends State<_CalendarView>
           onHorizontalDragUpdate: isVerticalResize ? null : _onHorizontalUpdate,
           onHorizontalDragEnd: isVerticalResize ? null : _onHorizontalEnd,
           child: IgnorePointer(
-              ignoring: _mouseCursor == SystemMouseCursors.basic ||
-                  _mouseCursor == SystemMouseCursors.move ||
-                  false,
-              //isAllDayPanel,
-              //ignoring: false, //_mouseCursor == SystemMouseCursors.move,
-              child: RepaintBoundary(
-                  child: CustomPaint(
-                painter: _ResizingAppointmentPainter(
-                    _resizingDetails,
-                    _isRTL,
-                    widget.textScaleFactor,
-                    widget.isMobilePlatform,
-                    AppointmentHelper.getAppointmentTextStyle(
-                        widget.calendar.appointmentTextStyle,
-                        widget.view,
-                        widget.themeData),
-                    allDayPanelHeight,
-                    viewHeaderHeight,
-                    timeLabelWidth,
-                    _timeIntervalHeight,
-                    _scrollController,
-                    widget.calendar.dragAndDropSettings,
-                    widget.view,
-                    _mouseCursor,
-                    weekNumberPanelWidth,
-                    widget.calendarTheme),
-              ))),
+            ignoring: _mouseCursor == SystemMouseCursors.basic ||
+                _mouseCursor == SystemMouseCursors.move ||
+                isAllDayPanel,
+            //ignoring: false,
+            child: RepaintBoundary(
+                child: CustomPaint(
+              painter: _ResizingAppointmentPainter(
+                  _resizingDetails,
+                  _isRTL,
+                  widget.textScaleFactor,
+                  widget.isMobilePlatform,
+                  AppointmentHelper.getAppointmentTextStyle(
+                      widget.calendar.appointmentTextStyle,
+                      widget.view,
+                      widget.themeData),
+                  allDayPanelHeight,
+                  viewHeaderHeight,
+                  timeLabelWidth,
+                  _timeIntervalHeight,
+                  _scrollController,
+                  widget.calendar.dragAndDropSettings,
+                  widget.view,
+                  _mouseCursor,
+                  weekNumberPanelWidth,
+                  widget.calendarTheme),
+            )),
+          ),
         ));
   }
 
@@ -13041,8 +13065,11 @@ class _ResizingAppointmentPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    print("Calling _ResizingAppointmentPainter ..........");
     if (resizingDetails.value.appointmentView == null ||
         resizingDetails.value.appointmentView!.appointmentRect == null) {
+      print(
+          "Calling _ResizingAppointmentPainter Returning - NoResizingDetails ..........");
       return;
     }
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
