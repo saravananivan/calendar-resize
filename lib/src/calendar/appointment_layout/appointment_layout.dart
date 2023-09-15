@@ -2461,20 +2461,30 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
       final RRect appointmentRect = appointmentView.appointmentRect!;
       print("calling appointmentCollection[$i]");
       print("appointmentRect: $appointmentRect");
-      canvas.drawRRect(appointmentRect, paint);
+      //canvas.drawRRect(appointmentRect, paint);
 
       reSizePath = Path();
 
-      reSizePath!.addArc(
-          Rect.fromCenter(
-              center: Offset(appointmentRect.right,
-                  appointmentRect.bottom - (appointmentRect.width * 0.6)),
-              width: 20,
-              height: 20),
-          0,
-          2 * math.pi);
+      reSizePath!.addRRect(appointmentRect);
+      canvas.drawPath(reSizePath!, paint);
 
-      canvas.drawPath(reSizePath!, Paint()..color = Colors.black);
+      // reSizePath!.addArc(
+      //     Rect.fromCenter(
+      //         center: Offset(appointmentRect.right,
+      //             appointmentRect.bottom - (appointmentRect.width * 0.6)),
+      //         width: 20,
+      //         height: 20),
+      //     0,
+      //     2 * math.pi);
+
+      // canvas.drawPath(reSizePath!, Paint()..color = Colors.black);
+
+      // canvas.drawCircle(
+      //     Offset(appointmentRect.left,
+      //         appointmentRect.top + (appointmentRect.height * 0.8)),
+      //     5,
+      //     Paint()..color = Colors.white);
+
       /* Remove this code
       // canvas.drawCircle(
       //     Offset(appointmentRect.right,
@@ -2483,11 +2493,6 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
       //     paint);
 
       */
-      canvas.drawCircle(
-          Offset(appointmentRect.left,
-              appointmentRect.top + (appointmentRect.height * 0.8)),
-          5,
-          Paint()..color = Colors.white);
 
       final bool canAddSpanIcon =
           AppointmentHelper.canAddSpanIcon(visibleDates, appointment, view);
