@@ -1472,7 +1472,15 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
   @override
   bool hitTestSelf(Offset position) {
     super.hitTestSelf(position);
-    return reSizePath!.contains(position);
+
+    if (reSizePath != null) {
+      print("hitTestSelf........... ${reSizePath!.contains(position)}");
+      print(reSizePath!.getBounds());
+      print("position : $");
+      return reSizePath!.contains(position);
+    }
+
+    return false;
   }
 
   /// attach will called when the render object rendered in view.
@@ -2443,7 +2451,6 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
   }
 
   void _drawTimelineAppointments(Canvas canvas, Size size, Paint paint) {
-    print("calling _drawTimelineAppointments..........");
     const double textStartPadding = 2;
     final bool useMobilePlatformUI =
         CalendarViewHelper.isMobileLayoutUI(size.width, isMobilePlatform);
@@ -2452,21 +2459,37 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
       if (appointmentView.canReuse ||
           appointmentView.appointmentRect == null ||
           appointmentView.appointment == null) {
-        print("calling appointmentCollection[i]..........");
         continue;
       }
 
       final CalendarAppointment appointment = appointmentView.appointment!;
-      paint.color = appointment.color;
-      final RRect appointmentRect = appointmentView.appointmentRect!;
-      print("calling appointmentCollection[$i]");
-      print("appointmentRect: $appointmentRect");
+
+      //Actual Code
       //canvas.drawRRect(appointmentRect, paint);
 
       reSizePath = Path();
+      final RRect appointmentRect = appointmentView.appointmentRect!;
 
-      reSizePath!.addRRect(appointmentRect);
-      canvas.drawPath(reSizePath!, paint);
+      reSizePath!.moveTo(appointmentRect.left, appointmentRect.bottom);
+      reSizePath!.lineTo(appointmentRect.left, appointmentRect.top);
+
+      final p2 = Path();
+      //paint.color = appointment.color;
+      paint.style = PaintingStyle.stroke;
+
+      p2.moveTo(appointmentRect.left, appointmentRect.top);
+      p2.lineTo(appointmentRect.right, appointmentRect.top);
+      p2.lineTo(appointmentRect.right, appointmentRect.bottom);
+      p2.lineTo(appointmentRect.left, appointmentRect.bottom);
+      //p2.addPath(reSizePath!, Offset.zero);
+
+      final reSizePathPaint = Paint();
+      reSizePathPaint.style = PaintingStyle.stroke;
+      reSizePathPaint.color = Colors.red;
+
+      //reSizePath!.addRRect(appointmentRect);
+      canvas.drawPath(p2, paint);
+      canvas.drawPath(reSizePath!, reSizePathPaint);
 
       // reSizePath!.addArc(
       //     Rect.fromCenter(

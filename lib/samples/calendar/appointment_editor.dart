@@ -8,11 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart' show DateFormat;
+// ignore: depend_on_referenced_packages
+import 'package:syncfusion_flutter_core/core.dart';
 
 ///calendar import
 import '../../calendar.dart';
-// ignore: depend_on_referenced_packages
-import 'package:syncfusion_flutter_core/core.dart';
 
 ///Local import
 import '../../model/model.dart';
@@ -3680,7 +3680,7 @@ class _AppointmentEditorWebState extends State<AppointmentEditorWeb> {
                                                             ),
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .only(
+                                                                    .only(
                                                                     bottom: 3),
                                                             onPressed:
                                                                 _addInterval))),
@@ -4391,7 +4391,7 @@ class _AppointmentEditorWebState extends State<AppointmentEditorWeb> {
                                                       child: Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .only(
+                                                                  .only(
                                                                   bottom: 6),
                                                           child: TextField(
                                                             mouseCursor:
@@ -4480,7 +4480,7 @@ class _AppointmentEditorWebState extends State<AppointmentEditorWeb> {
                                                         child: Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .only(
+                                                                    .only(
                                                                     left: 9),
                                                             child: TextField(
                                                               textAlignVertical:
@@ -4621,7 +4621,7 @@ class _AppointmentEditorWebState extends State<AppointmentEditorWeb> {
                                                           child: Container(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .only(
+                                                                    .only(
                                                                     left: 9),
                                                             child: TextField(
                                                               textAlignVertical:
@@ -4707,8 +4707,9 @@ class _AppointmentEditorWebState extends State<AppointmentEditorWeb> {
                                                                           },
                                                                           shape:
                                                                               const CircleBorder(),
-                                                                          padding:
-                                                                              const EdgeInsets.all(10.0),
+                                                                          padding: const EdgeInsets
+                                                                              .all(
+                                                                              10.0),
                                                                           child:
                                                                               Icon(
                                                                             Icons.date_range,
