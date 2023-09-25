@@ -974,6 +974,9 @@ class _TimelineRenderObject extends CustomCalendarRenderObject {
       width -= padding;
     }
 
+    print(
+        "_addMouseHovering(Canvas canvas, Size size, bool isResourceEnabled).......");
+
     _linePainter.style = PaintingStyle.stroke;
     _linePainter.strokeWidth = 2;
     _linePainter.color = calendarTheme.selectionBorderColor!.withOpacity(0.4);

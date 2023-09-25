@@ -784,7 +784,7 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
       bool isResourceEnabled,
       double viewHeaderHeight,
       double timeLabelWidth) {
-    print("_handleAppointmentDragStart .............");
+    print('_handleAppointmentDragStart .............');
     final _CalendarViewState currentState = _getCurrentViewByVisibleDates()!;
     currentState._updateDraggingMouseCursor(true);
     _dragDetails.value.timeIntervalHeight = currentState._getTimeIntervalHeight(
@@ -2377,7 +2377,7 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
       double viewHeaderHeight,
       double timeLabelWidth,
       double resourceViewSize) {
-    print("handle drag start............");
+    print('handle drag start............');
     if (!CalendarViewHelper.isTimelineView(widget.view)) {
       return;
     }
@@ -5182,6 +5182,7 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
       double viewHeaderHeight,
       double timeLabelWidth,
       bool isNeedDragAndDrop) {
+    print('_onVerticalStart .......');
     final _CalendarViewState currentState = _getCurrentViewByVisibleDates()!;
     if (currentState._hoveringAppointmentView != null &&
         currentState._hoveringAppointmentView!.appointment != null &&
@@ -6092,26 +6093,71 @@ class _CalendarViewState extends State<_CalendarView>
                     _mouseCursor == SystemMouseCursors.resizeLeft
                 ? SystemMouseCursors.resizeLeftRight
                 : _mouseCursor;
-    return MouseRegion(
-        cursor: currentCursor,
-        onEnter: _pointerEnterEvent,
-        onHover: _pointerHoverEvent,
-        onExit: _pointerExitEvent,
-        child: Stack(children: <Widget>[
-          GestureDetector(
-            onTapUp: _handleOnTapForTimeline,
-            child: SizedBox(
-              width: widget.width,
-              height: widget.height,
-              child: _addTimelineView(
-                  _timeIntervalHeight *
-                      (_horizontalLinesCount! * widget.visibleDates.length),
-                  widget.height,
-                  widget.locale),
-            ),
-          ),
-          _getResizeShadowView()
-        ]));
+
+    print("currentCursor : $currentCursor");
+    print(
+        'ResizeAgenda.instance.isIgnorePointer.value : ${ResizeAgenda.instance.isIgnorePointer.value}');
+
+    return widget.isMobilePlatform
+        ? GestureDetector(
+            onTapDown: _mobilePointerEnterEvent,
+            onTapUp: _mobilePointerExitEvent,
+            child: Stack(children: <Widget>[
+              GestureDetector(
+                onTapUp: _handleOnTapForTimeline,
+                child: SizedBox(
+                  width: widget.width,
+                  height: widget.height,
+                  child: _addTimelineView(
+                      _timeIntervalHeight *
+                          (_horizontalLinesCount! * widget.visibleDates.length),
+                      widget.height,
+                      widget.locale),
+                ),
+              ),
+              _getResizeShadowView()
+            ]))
+        : MouseRegion(
+            cursor: currentCursor,
+            onEnter: _pointerEnterEvent,
+            onHover: _pointerHoverEvent,
+            onExit: _pointerExitEvent,
+            child: Stack(children: <Widget>[
+              GestureDetector(
+                onTapUp: _handleOnTapForTimeline,
+                child: SizedBox(
+                  width: widget.width,
+                  height: widget.height,
+                  child: _addTimelineView(
+                      _timeIntervalHeight *
+                          (_horizontalLinesCount! * widget.visibleDates.length),
+                      widget.height,
+                      widget.locale),
+                ),
+              ),
+              _getResizeShadowView()
+            ]));
+
+    // return MouseRegion(
+    //     cursor: currentCursor,
+    //     onEnter: _pointerEnterEvent,
+    //     onHover: _pointerHoverEvent,
+    //     onExit: _pointerExitEvent,
+    //     child: Stack(children: <Widget>[
+    //       GestureDetector(
+    //         onTapUp: _handleOnTapForTimeline,
+    //         child: SizedBox(
+    //           width: widget.width,
+    //           height: widget.height,
+    //           child: _addTimelineView(
+    //               _timeIntervalHeight *
+    //                   (_horizontalLinesCount! * widget.visibleDates.length),
+    //               widget.height,
+    //               widget.locale),
+    //         ),
+    //       ),
+    //       _getResizeShadowView()
+    //     ]));
   }
 
   void _timelineViewHoveringUpdate() {
@@ -8412,7 +8458,7 @@ class _CalendarViewState extends State<_CalendarView>
     print(
         '_getResizeShadowView() ............. : ${!widget.isMobilePlatform || !widget.calendar.allowAppointmentResize}');
     print(
-        "widget.calendar.allowAppointmentResize: ${widget.calendar.allowAppointmentResize}");
+        'widget.calendar.allowAppointmentResize: ${widget.calendar.allowAppointmentResize}');
     // if (widget.isMobilePlatform || !widget.calendar.allowAppointmentResize) {
     //   return const SizedBox(width: 0, height: 0);
     // }
@@ -8461,18 +8507,19 @@ class _CalendarViewState extends State<_CalendarView>
     print(
         '_mouseCursor == SystemMouseCursors.move: ${_mouseCursor == SystemMouseCursors.move}');
     print(
-        "SystemMouseCursors.resizeUp: ${_mouseCursor == SystemMouseCursors.resizeUp}");
+        'SystemMouseCursors.resizeUp: ${_mouseCursor == SystemMouseCursors.resizeUp}');
     print(
-        "SystemMouseCursors.resizeDown : ${_mouseCursor == SystemMouseCursors.resizeDown}");
+        'SystemMouseCursors.resizeDown : ${_mouseCursor == SystemMouseCursors.resizeDown}');
     print(
-        "SystemMouseCursors.resizeLeft: ${_mouseCursor == SystemMouseCursors.resizeLeft} ");
+        'SystemMouseCursors.resizeLeft: ${_mouseCursor == SystemMouseCursors.resizeLeft} ');
     print(
-        "SystemMouseCursors.resizeRight: ${_mouseCursor == SystemMouseCursors.resizeRight} ");
+        'SystemMouseCursors.resizeRight: ${_mouseCursor == SystemMouseCursors.resizeRight} ');
 
-    print("overAllWidth : $overAllWidth");
-    print("overAllHeight : $overAllHeight");
+    print('isAllDayPanel : $isAllDayPanel');
+    print(
+        ' ignoring: ${_mouseCursor == SystemMouseCursors.basic || _mouseCursor == SystemMouseCursors.move || isAllDayPanel}');
 
-    print("isAllDayPanel : $isAllDayPanel");
+    print(ResizeAgenda.instance.isIgnorePointer.value);
 
     return Positioned(
         left: 0,
@@ -8487,10 +8534,10 @@ class _CalendarViewState extends State<_CalendarView>
           onHorizontalDragUpdate: isVerticalResize ? null : _onHorizontalUpdate,
           onHorizontalDragEnd: isVerticalResize ? null : _onHorizontalEnd,
           child: IgnorePointer(
+            //ignoring: !isIgnorePointer,
             ignoring: _mouseCursor == SystemMouseCursors.basic ||
                 _mouseCursor == SystemMouseCursors.move ||
                 isAllDayPanel,
-            //ignoring: false,
             child: RepaintBoundary(
                 child: CustomPaint(
               painter: _ResizingAppointmentPainter(
@@ -8515,6 +8562,53 @@ class _CalendarViewState extends State<_CalendarView>
             )),
           ),
         ));
+
+    //   return Positioned(
+    //       left: 0,
+    //       width: overAllWidth,
+    //       height: overAllHeight,
+    //       top: 0,
+    //       child: GestureDetector(
+    //         onVerticalDragStart: isVerticalResize ? _onVerticalStart : null,
+    //         onVerticalDragUpdate:
+    //             isVerticalResize ? _onVerticalUpdate : null,
+    //         onVerticalDragEnd: isVerticalResize ? _onVerticalEnd : null,
+    //         onHorizontalDragStart:
+    //             isVerticalResize ? null : _onHorizontalStart,
+    //         onHorizontalDragUpdate:
+    //             isVerticalResize ? null : _onHorizontalUpdate,
+    //         onHorizontalDragEnd: isVerticalResize ? null : _onHorizontalEnd,
+    //         child: IgnorePointer(
+    //           //ignoring: !isIgnorePointer,
+    //           ignoring: _mouseCursor == SystemMouseCursors.basic ||
+    //               _mouseCursor == SystemMouseCursors.move ||
+    //               !isIgnorePointer ||
+    //               isAllDayPanel,
+    //           child: RepaintBoundary(
+    //               child: CustomPaint(
+    //             painter: _ResizingAppointmentPainter(
+    //                 _resizingDetails,
+    //                 _isRTL,
+    //                 widget.textScaleFactor,
+    //                 widget.isMobilePlatform,
+    //                 AppointmentHelper.getAppointmentTextStyle(
+    //                     widget.calendar.appointmentTextStyle,
+    //                     widget.view,
+    //                     widget.themeData),
+    //                 allDayPanelHeight,
+    //                 viewHeaderHeight,
+    //                 timeLabelWidth,
+    //                 _timeIntervalHeight,
+    //                 _scrollController,
+    //                 widget.calendar.dragAndDropSettings,
+    //                 widget.view,
+    //                 _mouseCursor,
+    //                 weekNumberPanelWidth,
+    //                 widget.calendarTheme),
+    //           )),
+    //         ),
+    //       ));
+    // });
   }
 
   // Returns the day view as a child for the calendar view.
@@ -9123,6 +9217,7 @@ class _CalendarViewState extends State<_CalendarView>
 
   //// Handles the onTap callback for timeline view cells, and view header of timeline.
   void _handleOnTapForTimeline(TapUpDetails details) {
+    print('_handleOnTapForTimeline : $details');
     _handleTouchOnTimeline(details, null);
   }
 
@@ -9218,6 +9313,7 @@ class _CalendarViewState extends State<_CalendarView>
   AppointmentView? _handleTouchOnTimeline(
       TapUpDetails? tapDetails, LongPressStartDetails? longPressDetails) {
     widget.removePicker();
+    print('tapped _handleTouchOnTimeline');
     final DateTime? previousSelectedDate = _selectionPainter!.selectedDate;
     double xDetails = 0, yDetails = 0;
     bool isTapCallback = false;
@@ -9314,6 +9410,8 @@ class _CalendarViewState extends State<_CalendarView>
         final DateTime? selectedDate =
             _getDateFromPosition(xDetails, yDetails - viewHeaderHeight, 0);
 
+        print('Selected date null.........');
+
         /// Restrict the tap/long press callback while interact after
         /// the timeslots.
         if (selectedDate == null) {
@@ -9340,6 +9438,8 @@ class _CalendarViewState extends State<_CalendarView>
               xDetails, selectedDate, _selectedResourceIndex)) {
             return null;
           }
+          print('canRaiseTap: $canRaiseTap');
+          print('canRaiseLongPress: $canRaiseLongPress');
 
           if (canRaiseTap) {
             CalendarViewHelper.raiseCalendarTapCallback(
@@ -10692,6 +10792,8 @@ class _CalendarViewState extends State<_CalendarView>
       return;
     }
 
+    print("_updatePointerHover for mobiles........");
+
     // ignore: avoid_as
     final RenderBox box = context.findRenderObject()! as RenderBox;
     final Offset localPosition = box.globalToLocal(globalPosition);
@@ -11058,12 +11160,44 @@ class _CalendarViewState extends State<_CalendarView>
     _calendarCellNotifier.value = Offset(xPosition, yPosition);
   }
 
+  // void _mobilePointerEnterEvent(PointerDownEvent event) {
+//  print('_mobilePointerEnterEvent, ${event.position}');
+//     _updatePointerHover(event.position);
+//     }
+  void _mobilePointerEnterEvent(TapDownDetails event) {
+    print('_mobilePointerEnterEvent, ${event.globalPosition}');
+    _updatePointerHover(event.globalPosition);
+  }
+
   void _pointerEnterEvent(PointerEnterEvent event) {
+    _updatePointerHover(event.position);
+  }
+
+  void _mobilePointerHoverEvent(PointerHoverEvent event) {
+    print('_mobilePointerHoverEvent, ${event.position}');
     _updatePointerHover(event.position);
   }
 
   void _pointerHoverEvent(PointerHoverEvent event) {
     _updatePointerHover(event.position);
+  }
+
+  // void _mobilePointerExitEvent(PointerUpEvent event) {
+  void _mobilePointerExitEvent(TapUpDetails event) {
+    // print("_mobilePointerExitEvent, ${event.position}");
+    print("_mobilePointerExitEvent, ${event.globalPosition}");
+    _hoveringDate = null;
+    _calendarCellNotifier.value = null;
+    _viewHeaderNotifier.value = null;
+    _appointmentHoverNotifier.value = null;
+    if (_mouseCursor != SystemMouseCursors.basic &&
+        _resizingDetails.value.appointmentView == null) {
+      setState(() {
+        _mouseCursor = SystemMouseCursors.basic;
+      });
+    }
+    _allDayNotifier.value = null;
+    _hoveringAppointmentView = null;
   }
 
   void _pointerExitEvent(PointerExitEvent event) {
@@ -13065,13 +13199,15 @@ class _ResizingAppointmentPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    print("Calling _ResizingAppointmentPainter ..........");
+    print('Calling _ResizingAppointmentPainter ..........');
     if (resizingDetails.value.appointmentView == null ||
         resizingDetails.value.appointmentView!.appointmentRect == null) {
       print(
-          "Calling _ResizingAppointmentPainter Returning - NoResizingDetails ..........");
+          'Calling _ResizingAppointmentPainter Returning - NoResizingDetails ..........');
       return;
     }
+
+    print("============Size: ${size}============");
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
     final double scrollOffset =

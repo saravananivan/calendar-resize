@@ -1469,19 +1469,26 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
     _tapGestureRecognizer?.onTap = value;
   }
 
-  @override
-  bool hitTestSelf(Offset position) {
-    super.hitTestSelf(position);
+  // @override
+  // bool hitTestSelf(Offset position) {
+  //   super.hitTestSelf(position);
 
-    if (reSizePath != null) {
-      print("hitTestSelf........... ${reSizePath!.contains(position)}");
-      print(reSizePath!.getBounds());
-      print("position : $");
-      return reSizePath!.contains(position);
-    }
+  //    RenderBox? child = firstChild;
+  //   if (child == null) {
+  //     return false;
+  //   }
 
-    return false;
-  }
+  //   if (reSizePath != null) {
+  //     print("hitTestSelf........... ${reSizePath!.contains(position)}");
+  //     print(reSizePath!.getBounds());
+  //     print("position : $position");
+  //     ResizeAgenda.instance.isIgnorePointer.value =
+  //         reSizePath!.contains(position);
+  //     return reSizePath!.contains(position);
+  //   }
+
+  //   return false;
+  // }
 
   /// attach will called when the render object rendered in view.
   @override
@@ -1585,7 +1592,6 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
     if (child == null) {
       return false;
     }
-
     for (int i = 0; i < appointmentCollection.length; i++) {
       final AppointmentView appointmentView = appointmentCollection[i];
       if (appointmentView.appointment == null ||
@@ -2463,44 +2469,47 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
       }
 
       final CalendarAppointment appointment = appointmentView.appointment!;
-
-      //Actual Code
-      //canvas.drawRRect(appointmentRect, paint);
-
-      reSizePath = Path();
       final RRect appointmentRect = appointmentView.appointmentRect!;
 
-      reSizePath!.moveTo(appointmentRect.left, appointmentRect.bottom);
-      reSizePath!.lineTo(appointmentRect.left, appointmentRect.top);
+      paint.color = appointment.color;
+      //Actual Code
+      canvas.drawRRect(appointmentRect, paint);
 
-      final p2 = Path();
-      //paint.color = appointment.color;
-      paint.style = PaintingStyle.stroke;
+      // reSizePath = Path();
 
-      p2.moveTo(appointmentRect.left, appointmentRect.top);
-      p2.lineTo(appointmentRect.right, appointmentRect.top);
-      p2.lineTo(appointmentRect.right, appointmentRect.bottom);
-      p2.lineTo(appointmentRect.left, appointmentRect.bottom);
+      // reSizePath!.moveTo(appointmentRect.left, appointmentRect.bottom);
+      // reSizePath!.lineTo(appointmentRect.left, appointmentRect.top);
+
+      //final p2 = Path();
+      // paint.style = PaintingStyle.stroke;
+
+      // p2.moveTo(appointmentRect.left, appointmentRect.top);
+      // p2.lineTo(appointmentRect.right, appointmentRect.top);
+      // p2.lineTo(appointmentRect.right, appointmentRect.bottom);
+      // p2.lineTo(appointmentRect.left, appointmentRect.bottom);
       //p2.addPath(reSizePath!, Offset.zero);
 
-      final reSizePathPaint = Paint();
-      reSizePathPaint.style = PaintingStyle.stroke;
-      reSizePathPaint.color = Colors.red;
+      // final reSizePathPaint = Paint();
+      // reSizePathPaint.style = PaintingStyle.stroke;
+      // reSizePathPaint.color = Colors.red;
+      // canvas.drawPath(p2, paint);
+      // canvas.drawPath(reSizePath!, reSizePathPaint);
 
-      //reSizePath!.addRRect(appointmentRect);
-      canvas.drawPath(p2, paint);
-      canvas.drawPath(reSizePath!, reSizePathPaint);
+      reSizePath = Path();
 
-      // reSizePath!.addArc(
-      //     Rect.fromCenter(
-      //         center: Offset(appointmentRect.right,
-      //             appointmentRect.bottom - (appointmentRect.width * 0.6)),
-      //         width: 20,
-      //         height: 20),
-      //     0,
-      //     2 * math.pi);
+      // reSizePath!.addRRect(appointmentRect);
+      // canvas.drawPath(reSizePath!, paint);
 
-      // canvas.drawPath(reSizePath!, Paint()..color = Colors.black);
+      reSizePath!.addArc(
+          Rect.fromCenter(
+              center: Offset(appointmentRect.right,
+                  appointmentRect.bottom - (appointmentRect.width * 0.6)),
+              width: 20,
+              height: 20),
+          0,
+          2 * math.pi);
+
+      canvas.drawPath(reSizePath!, Paint()..color = Colors.black);
 
       // canvas.drawCircle(
       //     Offset(appointmentRect.left,

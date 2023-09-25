@@ -168,6 +168,30 @@ class _ResizingCalendarState extends SampleViewState {
     return appointments;
   }
 
+  void resizeStart(
+      AppointmentResizeStartDetails appointmentResizeStartDetails) {
+    print("resizeStart............");
+    dynamic appointment = appointmentResizeStartDetails.appointment;
+    CalendarResource? resource = appointmentResizeStartDetails.resource;
+  }
+
+  void resizeUpdate(
+      AppointmentResizeUpdateDetails appointmentResizeUpdateDetails) {
+    print("resizeUpdate............");
+    dynamic appointment = appointmentResizeUpdateDetails.appointment;
+    DateTime? resizingTime = appointmentResizeUpdateDetails.resizingTime;
+    Offset? resizingOffset = appointmentResizeUpdateDetails.resizingOffset;
+    CalendarResource? resourceDetails = appointmentResizeUpdateDetails.resource;
+  }
+
+  void resizeEnd(AppointmentResizeEndDetails appointmentResizeEndDetails) {
+    print("resizeEnd...................");
+    dynamic appointment = appointmentResizeEndDetails.appointment;
+    DateTime? startTime = appointmentResizeEndDetails.startTime;
+    DateTime? endTime = appointmentResizeEndDetails.endTime;
+    CalendarResource? resourceDetails = appointmentResizeEndDetails.resource;
+  }
+
   /// Returns the calendar widget based on the properties passed.
   SfCalendar _getResizingCalendar(
       [CalendarController? calendarController,
@@ -180,7 +204,9 @@ class _ResizingCalendarState extends SampleViewState {
       showNavigationArrow: model.isWebFullView,
       onViewChanged: viewChangedCallback,
       allowAppointmentResize: true,
-      showDatePickerButton: true,
+      onAppointmentResizeStart: resizeStart,
+      onAppointmentResizeUpdate: resizeUpdate,
+      onAppointmentResizeEnd: resizeEnd,
       monthViewSettings: const MonthViewSettings(
           appointmentDisplayMode: MonthAppointmentDisplayMode.appointment),
     );
