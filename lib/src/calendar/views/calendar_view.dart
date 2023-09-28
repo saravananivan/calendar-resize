@@ -877,9 +877,15 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
       bool isResourceEnabled,
       double viewHeaderHeight,
       double timeLabelWidth) {
+    print("_handleLongPressStart........");
+    print("_handleLongPressStart - !isNeedDragAndDrop: ${!isNeedDragAndDrop}");
     final _CalendarViewState currentState = _getCurrentViewByVisibleDates()!;
     AppointmentView? appointmentView =
         _getDragAppointment(details, currentState);
+    print(
+        "_handleLongPressStart - appointmentView: ${appointmentView?.appointment?.subject} ");
+    print(
+        "!isNeedDragAndDrop || appointmentView == null: ${!isNeedDragAndDrop || appointmentView == null}");
     if (!isNeedDragAndDrop || appointmentView == null) {
       _dragDetails.value.position.value = null;
       return;
@@ -2383,7 +2389,7 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
     }
     final _CalendarViewState viewKey = _getCurrentViewByVisibleDates()!;
     if (viewKey._hoveringAppointmentView != null &&
-        !widget.isMobilePlatform &&
+        // !widget.isMobilePlatform &&
         isNeedDragAndDrop) {
       _handleAppointmentDragStart(
           viewKey._hoveringAppointmentView!.clone(),
@@ -4915,7 +4921,6 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
       double viewHeaderHeight,
       double timeLabelWidth,
       bool isNeedDragAndDrop) {
-    print('_onHorizontalStart ............');
     final _CalendarViewState currentState = _getCurrentViewByVisibleDates()!;
     if (currentState._hoveringAppointmentView != null &&
         currentState._hoveringAppointmentView!.appointment != null &&
@@ -5641,6 +5646,9 @@ class _CalendarViewState extends State<_CalendarView>
   late ValueNotifier<_ResizingPaintDetails> _resizingDetails;
   double? _maximumResizingPosition;
 
+  //Added Property---------
+  GestureRecognizer gestureRecognizer = TapGestureRecognizer();
+
   @override
   void initState() {
     _resizingDetails = ValueNotifier<_ResizingPaintDetails>(
@@ -6098,10 +6106,26 @@ class _CalendarViewState extends State<_CalendarView>
     print(
         'ResizeAgenda.instance.isIgnorePointer.value : ${ResizeAgenda.instance.isIgnorePointer.value}');
 
+    //  return widget.isMobilePlatform
+    // ? GestureDetector(
+    //     onTapDown: _mobilePointerEnterEvent,
+    //     onTapUp: _mobilePointerExitEvent,
+    //     child:
+
     return widget.isMobilePlatform
-        ? GestureDetector(
-            onTapDown: _mobilePointerEnterEvent,
-            onTapUp: _mobilePointerExitEvent,
+        ? RawGestureDetector(
+            gestures: <Type, GestureRecognizerFactory>{
+                TapGestureRecognizer:
+                    GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+                        () => TapGestureRecognizer(),
+                        (TapGestureRecognizer instance) {
+                  instance
+                    ..onTapDown = _mobilePointerEnterEvent
+                    ..onTapUp = _mobilePointerExitEvent;
+                  print("RawGestureDetector: ${instance..debugDescription}");
+                  print("RawGestureDetector instance: $instance");
+                })
+              },
             child: Stack(children: <Widget>[
               GestureDetector(
                 onTapUp: _handleOnTapForTimeline,
@@ -6955,6 +6979,7 @@ class _CalendarViewState extends State<_CalendarView>
 
   void _onHorizontalStart(DragStartDetails details) {
     print('_onHorizontalStart(DragStartDetails details)......');
+    print("_mouseCursor: $_mouseCursor");
     final bool isDayView = CalendarViewHelper.isDayView(
         widget.view,
         widget.calendar.timeSlotViewSettings.numberOfDaysInView,
@@ -6974,18 +6999,21 @@ class _CalendarViewState extends State<_CalendarView>
     const double padding = 10;
     final bool isForwardResize = _mouseCursor == SystemMouseCursors.resizeRight;
     final bool isBackwardResize = _mouseCursor == SystemMouseCursors.resizeLeft;
+    print("_onHorizontalStart isForwardResize : $isForwardResize");
+    print("_onHorizontalStart isBackwardResize: $isBackwardResize");
     if (!isTimelineView && widget.view != CalendarView.month) {
       if ((!_isRTL && xPosition < timeLabelWidth) ||
           (_isRTL && xPosition > (widget.width - timeLabelWidth))) {
         return;
       }
-
       if (isBackwardResize) {
         xPosition += padding;
       } else if (isForwardResize) {
         xPosition -= padding;
       }
 
+      print(
+          "_onHorizontalStart - xPosition: $xPosition,yPosition: $yPosition ");
       appointmentView = _getAllDayAppointmentOnPoint(
           _updateCalendarStateDetails.allDayAppointmentViewCollection,
           xPosition,
@@ -7067,6 +7095,11 @@ class _CalendarViewState extends State<_CalendarView>
       _updateMaximumResizingPosition(isForwardResize, isBackwardResize,
           appointmentView, null, viewHeaderHeight);
     }
+
+    print(
+        "_onHorizontalStart : _mouseCursor != SystemMouseCursors.basic &&  _mouseCursor != SystemMouseCursors.move ${_mouseCursor != SystemMouseCursors.basic && _mouseCursor != SystemMouseCursors.move}");
+
+    print("_onHorizontalStart : _mouseCursor : $_mouseCursor");
 
     if (_mouseCursor != SystemMouseCursors.basic &&
         _mouseCursor != SystemMouseCursors.move) {
@@ -9379,6 +9412,10 @@ class _CalendarViewState extends State<_CalendarView>
 
       final AppointmentView? appointmentView =
           _appointmentLayout.getAppointmentViewOnPoint(xPosition, yPosition);
+
+      print(
+          "_handleTouchOnTimeline: ${appointmentView?.appointment?.subject} =========");
+
       if (appointmentView == null) {
         _drawSelection(xDetails, yPosition, timeLabelWidth);
         selectedDate = _selectionPainter!.selectedDate;
@@ -9405,6 +9442,10 @@ class _CalendarViewState extends State<_CalendarView>
       final bool canRaiseSelectionChanged =
           CalendarViewHelper.shouldRaiseCalendarSelectionChangedCallback(
               widget.calendar.onSelectionChanged);
+
+      print('canRaiseTap: $canRaiseTap');
+      print('canRaiseLongPress: $canRaiseLongPress');
+      print('canRaiseSelectionChanged: $canRaiseSelectionChanged');
 
       if (canRaiseLongPress || canRaiseTap || canRaiseSelectionChanged) {
         final DateTime? selectedDate =
@@ -9438,8 +9479,6 @@ class _CalendarViewState extends State<_CalendarView>
               xDetails, selectedDate, _selectedResourceIndex)) {
             return null;
           }
-          print('canRaiseTap: $canRaiseTap');
-          print('canRaiseLongPress: $canRaiseLongPress');
 
           if (canRaiseTap) {
             CalendarViewHelper.raiseCalendarTapCallback(
@@ -10716,22 +10755,36 @@ class _CalendarViewState extends State<_CalendarView>
                   appointmentView.appointment!.exactEndTime)
               : appointmentView.appointment!.exactEndTime;
 
-      if (xPosition >= appointmentView.appointmentRect!.left &&
-          xPosition <= appointmentView.appointmentRect!.left + padding &&
-          ((isMonthView &&
-                  isSameDate(
-                      _isRTL ? appointmentEndTime : appointmentStartTime,
-                      _isRTL
-                          ? appointmentExactEndTime
-                          : appointmentExactStartTime)) ||
-              (!isMonthView &&
-                  CalendarViewHelper.isSameTimeSlot(
-                      _isRTL ? appointmentEndTime : appointmentStartTime,
-                      _isRTL
-                          ? appointmentExactEndTime
-                          : appointmentExactStartTime))) &&
-          ((_isRTL && !canAddForwardSpanIcon) ||
-              (!_isRTL && !canAddBackwardSpanIcon))) {
+      print(
+          'xPosition: $xPosition, appointmentView.appointmentRect!.left: ${appointmentView.appointmentRect!.left}');
+      print(
+          'xPosition: $xPosition, appointmentView.appointmentRect!.left + padding: ${appointmentView.appointmentRect!.left + padding}');
+      // if (xPosition >= appointmentView.appointmentRect!.left &&
+      //     xPosition <= appointmentView.appointmentRect!.left + padding &&
+      //     ((isMonthView &&
+      //             isSameDate(
+      //                 _isRTL ? appointmentEndTime : appointmentStartTime,
+      //                 _isRTL
+      //                     ? appointmentExactEndTime
+      //                     : appointmentExactStartTime)) ||
+      //         (!isMonthView &&
+      //             CalendarViewHelper.isSameTimeSlot(
+      //                 _isRTL ? appointmentEndTime : appointmentStartTime,
+      //                 _isRTL
+      //                     ? appointmentExactEndTime
+      //                     : appointmentExactStartTime))) &&
+      //     ((_isRTL && !canAddForwardSpanIcon) ||
+      //         (!_isRTL && !canAddBackwardSpanIcon))) {
+      //   setState(() {
+      //     _mouseCursor = SystemMouseCursors.resizeLeft;
+      //   });
+      // }
+
+      print(
+          "ResizeAgenda.instance.isIgnorePointer.value CalendarView: ${ResizeAgenda.instance.isIgnorePointer.value}");
+      if (ResizeAgenda.instance.isIgnorePointer.value ||
+          (xPosition >= appointmentView.appointmentRect!.left &&
+              xPosition <= appointmentView.appointmentRect!.left + padding)) {
         setState(() {
           _mouseCursor = SystemMouseCursors.resizeLeft;
         });
@@ -10786,13 +10839,22 @@ class _CalendarViewState extends State<_CalendarView>
 
   void _updatePointerHover(Offset globalPosition) {
     // if (widget.isMobilePlatform ||
+
+    print(
+        '_resizingDetails.value.appointmentView != null: ${_resizingDetails.value.appointmentView}, ${_resizingDetails.value.appointmentView != null}');
+    print(
+        'widget.dragDetails.value.appointmentView != null: ${widget.dragDetails.value.appointmentView}, ${widget.dragDetails.value.appointmentView != null}');
+    print(
+        'widget.calendar.appointmentBuilder == null: ${widget.calendar.appointmentBuilder}, ${widget.calendar.appointmentBuilder == null}');
+    print(
+        '_resizingDetails.value.appointmentView != null || widget.dragDetails.value.appointmentView != null && widget.calendar.appointmentBuilder == null : ${_resizingDetails.value.appointmentView != null || widget.dragDetails.value.appointmentView != null && widget.calendar.appointmentBuilder == null}');
     if (_resizingDetails.value.appointmentView != null ||
         widget.dragDetails.value.appointmentView != null &&
             widget.calendar.appointmentBuilder == null) {
       return;
     }
 
-    print("_updatePointerHover for mobiles........");
+    print('_updatePointerHover for mobiles........');
 
     // ignore: avoid_as
     final RenderBox box = context.findRenderObject()! as RenderBox;
@@ -10825,6 +10887,7 @@ class _CalendarViewState extends State<_CalendarView>
     double xPosition;
     double yPosition;
     final bool isTimelineViews = CalendarViewHelper.isTimelineView(widget.view);
+
     if (widget.view != CalendarView.month && !isTimelineViews) {
       /// In LTR, remove the time ruler width value from the
       /// touch x position while calculate the selected date from position.
@@ -10962,6 +11025,8 @@ class _CalendarViewState extends State<_CalendarView>
       final AppointmentView? appointment =
           _appointmentLayout.getAppointmentViewOnPoint(xPosition, yPosition);
       _hoveringAppointmentView = appointment;
+      print(
+          '_updatePointerHover - appointment : ${appointment?.appointment?.subject}');
       if (appointment != null) {
         _updateHoveringForAppointment(xPosition, yPosition);
         _updateMouseCursorForAppointment(
@@ -11160,10 +11225,6 @@ class _CalendarViewState extends State<_CalendarView>
     _calendarCellNotifier.value = Offset(xPosition, yPosition);
   }
 
-  // void _mobilePointerEnterEvent(PointerDownEvent event) {
-//  print('_mobilePointerEnterEvent, ${event.position}');
-//     _updatePointerHover(event.position);
-//     }
   void _mobilePointerEnterEvent(TapDownDetails event) {
     print('_mobilePointerEnterEvent, ${event.globalPosition}');
     _updatePointerHover(event.globalPosition);
@@ -11224,12 +11285,13 @@ class _CalendarViewState extends State<_CalendarView>
     AppointmentView? selectedAppointmentView;
     for (int i = 0; i < appointmentCollection.length; i++) {
       final AppointmentView appointmentView = appointmentCollection[i];
-      if (appointmentView.appointment != null &&
-          appointmentView.appointmentRect != null &&
-          appointmentView.appointmentRect!.left <= x &&
-          appointmentView.appointmentRect!.right >= x &&
-          appointmentView.appointmentRect!.top <= y &&
-          appointmentView.appointmentRect!.bottom >= y) {
+      if ((appointmentView.appointment != null &&
+              appointmentView.appointmentRect != null &&
+              appointmentView.appointmentRect!.left <= x &&
+              appointmentView.appointmentRect!.right >= x &&
+              appointmentView.appointmentRect!.top <= y &&
+              appointmentView.appointmentRect!.bottom >= y) ||
+          ResizeAgenda.instance.isIgnorePointer.value) {
         selectedAppointmentView = appointmentView;
         break;
       }
@@ -13200,6 +13262,10 @@ class _ResizingAppointmentPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     print('Calling _ResizingAppointmentPainter ..........');
+    print(
+        "resizingDetails.value.appointmentView: ${resizingDetails.value?.appointmentView?.appointment}");
+    print(
+        "resizingDetails.value.appointmentView!.appointmentRect: ${resizingDetails.value.appointmentView?.appointmentRect}");
     if (resizingDetails.value.appointmentView == null ||
         resizingDetails.value.appointmentView!.appointmentRect == null) {
       print(

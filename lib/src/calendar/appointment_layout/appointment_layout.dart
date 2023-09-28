@@ -315,12 +315,13 @@ class _AppointmentLayoutState extends State<AppointmentLayout> {
     AppointmentView? selectedAppointmentView;
     for (int i = 0; i < _appointmentCollection.length; i++) {
       final AppointmentView appointmentView = _appointmentCollection[i];
-      if (appointmentView.appointment != null &&
-          appointmentView.appointmentRect != null &&
-          appointmentView.appointmentRect!.left <= x &&
-          appointmentView.appointmentRect!.right >= x &&
-          appointmentView.appointmentRect!.top <= y &&
-          appointmentView.appointmentRect!.bottom >= y) {
+      if ((appointmentView.appointment != null &&
+              appointmentView.appointmentRect != null &&
+              appointmentView.appointmentRect!.left <= x &&
+              appointmentView.appointmentRect!.right >= x &&
+              appointmentView.appointmentRect!.top <= y &&
+              appointmentView.appointmentRect!.bottom >= y) ||
+          ResizeAgenda.instance.isIgnorePointer.value) {
         selectedAppointmentView = appointmentView;
         break;
       }
@@ -1457,6 +1458,18 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
 
   late Path? reSizePath;
 
+  //Path? _reSizePath;
+  // Path get reSizePath => _reSizePath ?? Path();
+
+  // set reSizePath(Path value) {
+  //   if (_reSizePath == value) {
+  //     return;
+  //   }
+
+  //   _reSizePath = value;
+  //   markNeedsLayout();
+  // }
+
   TapGestureRecognizer? _tapGestureRecognizer;
 
   VoidCallback? _onTap;
@@ -1469,26 +1482,28 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
     _tapGestureRecognizer?.onTap = value;
   }
 
-  // @override
-  // bool hitTestSelf(Offset position) {
-  //   super.hitTestSelf(position);
+  @override
+  bool hitTestSelf(Offset position) {
+    super.hitTestSelf(position);
 
-  //    RenderBox? child = firstChild;
-  //   if (child == null) {
-  //     return false;
-  //   }
+    // RenderBox? child = firstChild;
+    // print('child == null: ${child == null}');
+    // if (child == null) {
+    //   return false;
+    // }
 
-  //   if (reSizePath != null) {
-  //     print("hitTestSelf........... ${reSizePath!.contains(position)}");
-  //     print(reSizePath!.getBounds());
-  //     print("position : $position");
-  //     ResizeAgenda.instance.isIgnorePointer.value =
-  //         reSizePath!.contains(position);
-  //     return reSizePath!.contains(position);
-  //   }
+    if (reSizePath != null) {
+      print('reSizePath != null : ${reSizePath != null}');
+      // print('hitTestSelf........... ${reSizePath!.contains(position)}');
+      print(reSizePath!.getBounds());
+      print('position : $position');
+      ResizeAgenda.instance.isIgnorePointer.value =
+          reSizePath!.contains(position);
+      return true; // reSizePath!.contains(position);
+    }
 
-  //   return false;
-  // }
+    return false;
+  }
 
   /// attach will called when the render object rendered in view.
   @override
@@ -1588,6 +1603,7 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
 
   @override
   bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
+    print("calling hitTestChildren .......... ");
     RenderBox? child = firstChild;
     if (child == null) {
       return false;
@@ -2460,6 +2476,8 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
     const double textStartPadding = 2;
     final bool useMobilePlatformUI =
         CalendarViewHelper.isMobileLayoutUI(size.width, isMobilePlatform);
+
+    reSizePath = Path();
     for (int i = 0; i < appointmentCollection.length; i++) {
       final AppointmentView appointmentView = appointmentCollection[i];
       if (appointmentView.canReuse ||
@@ -2502,10 +2520,10 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
 
       reSizePath!.addArc(
           Rect.fromCenter(
-              center: Offset(appointmentRect.right,
-                  appointmentRect.bottom - (appointmentRect.width * 0.6)),
-              width: 20,
-              height: 20),
+              center: Offset(appointmentRect.left,
+                  appointmentRect.bottom - (appointmentRect.height * 0.6)),
+              width: 10,
+              height: 10),
           0,
           2 * math.pi);
 
