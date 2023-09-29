@@ -315,13 +315,23 @@ class _AppointmentLayoutState extends State<AppointmentLayout> {
     AppointmentView? selectedAppointmentView;
     for (int i = 0; i < _appointmentCollection.length; i++) {
       final AppointmentView appointmentView = _appointmentCollection[i];
+      print("selectedAppointmentView=========");
+      print(
+          "${((appointmentView.appointment != null && appointmentView.appointmentRect != null && appointmentView.appointmentRect!.left <= x && appointmentView.appointmentRect!.right >= x && appointmentView.appointmentRect!.top <= y && appointmentView.appointmentRect!.bottom >= y) || ResizeAgenda.instance.isIgnorePointer.value || ResizeAgenda.instance.isIgnorePointerRight.value)}");
+
+      print(
+          "ResizeAgenda.instance.isIgnorePointer.value: ${ResizeAgenda.instance.isIgnorePointer.value} ");
+      print(
+          "ResizeAgenda.instance.isIgnorePointerRight.value: ${ResizeAgenda.instance.isIgnorePointerRight.value}");
+
       if ((appointmentView.appointment != null &&
               appointmentView.appointmentRect != null &&
               appointmentView.appointmentRect!.left <= x &&
               appointmentView.appointmentRect!.right >= x &&
               appointmentView.appointmentRect!.top <= y &&
               appointmentView.appointmentRect!.bottom >= y) ||
-          ResizeAgenda.instance.isIgnorePointer.value) {
+          ResizeAgenda.instance.isIgnorePointer.value ||
+          ResizeAgenda.instance.isIgnorePointerRight.value) {
         selectedAppointmentView = appointmentView;
         break;
       }
@@ -1457,6 +1467,7 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
   }
 
   late Path? reSizePath;
+  late Path? reSizePathRight;
 
   //Path? _reSizePath;
   // Path get reSizePath => _reSizePath ?? Path();
@@ -1499,7 +1510,19 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
       print('position : $position');
       ResizeAgenda.instance.isIgnorePointer.value =
           reSizePath!.contains(position);
-      return true; // reSizePath!.contains(position);
+      //return true; // reSizePath!.contains(position);
+    }
+    if (reSizePathRight != null) {
+      print('reSizePathRight != null : ${reSizePathRight != null}');
+      print('position : $position');
+      ResizeAgenda.instance.isIgnorePointerRight.value =
+          reSizePathRight!.contains(position);
+      // return true;
+    }
+
+    if (ResizeAgenda.instance.isIgnorePointer.value ||
+        ResizeAgenda.instance.isIgnorePointerRight.value) {
+      return true;
     }
 
     return false;
@@ -2478,6 +2501,7 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
         CalendarViewHelper.isMobileLayoutUI(size.width, isMobilePlatform);
 
     reSizePath = Path();
+    reSizePathRight = Path();
     for (int i = 0; i < appointmentCollection.length; i++) {
       final AppointmentView appointmentView = appointmentCollection[i];
       if (appointmentView.canReuse ||
@@ -2522,12 +2546,24 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
           Rect.fromCenter(
               center: Offset(appointmentRect.left,
                   appointmentRect.bottom - (appointmentRect.height * 0.6)),
-              width: 10,
-              height: 10),
+              width: 15, //30
+              height: 15), //30),
           0,
           2 * math.pi);
 
       canvas.drawPath(reSizePath!, Paint()..color = Colors.black);
+
+      reSizePathRight = Path();
+      reSizePathRight!.addArc(
+          Rect.fromCenter(
+              center: Offset(appointmentRect.right,
+                  appointmentRect.bottom - (appointmentRect.height * 0.4)),
+              width: 15, //30,
+              height: 15), //30),
+          0,
+          2 * math.pi);
+
+      canvas.drawPath(reSizePathRight!, Paint()..color = Colors.black);
 
       // canvas.drawCircle(
       //     Offset(appointmentRect.left,

@@ -1290,6 +1290,9 @@ class ResizeAgenda extends ChangeNotifier {
   /// Holds the boolean to ignore pointer or not.
   ValueNotifier<bool> isIgnorePointer = ValueNotifier(false);
 
+  /// Holds the boolean to ignore pointer or not.
+  ValueNotifier<bool> isIgnorePointerRight = ValueNotifier(false);
+
   /// constructor
   static final ResizeAgenda instance = ResizeAgenda._internal();
 }

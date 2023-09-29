@@ -10788,22 +10788,30 @@ class _CalendarViewState extends State<_CalendarView>
         setState(() {
           _mouseCursor = SystemMouseCursors.resizeLeft;
         });
-      } else if (xPosition <= appointmentView.appointmentRect!.right &&
-          xPosition >= appointmentView.appointmentRect!.right - padding &&
-          ((isMonthView &&
-                  isSameDate(
-                      _isRTL ? appointmentStartTime : appointmentEndTime,
-                      _isRTL
-                          ? appointmentExactStartTime
-                          : appointmentExactEndTime)) ||
-              (!isMonthView &&
-                  CalendarViewHelper.isSameTimeSlot(
-                      _isRTL ? appointmentStartTime : appointmentEndTime,
-                      _isRTL
-                          ? appointmentExactStartTime
-                          : appointmentExactEndTime))) &&
-          ((_isRTL && !canAddBackwardSpanIcon) ||
-              (!_isRTL && !canAddForwardSpanIcon))) {
+      }
+      // else if (xPosition <= appointmentView.appointmentRect!.right &&
+      //     xPosition >= appointmentView.appointmentRect!.right - padding &&
+      //     ((isMonthView &&
+      //             isSameDate(
+      //                 _isRTL ? appointmentStartTime : appointmentEndTime,
+      //                 _isRTL
+      //                     ? appointmentExactStartTime
+      //                     : appointmentExactEndTime)) ||
+      //         (!isMonthView &&
+      //             CalendarViewHelper.isSameTimeSlot(
+      //                 _isRTL ? appointmentStartTime : appointmentEndTime,
+      //                 _isRTL
+      //                     ? appointmentExactStartTime
+      //                     : appointmentExactEndTime))) &&
+      //     ((_isRTL && !canAddBackwardSpanIcon) ||
+      //         (!_isRTL && !canAddForwardSpanIcon))) {
+      //   setState(() {
+      //     _mouseCursor = SystemMouseCursors.resizeRight;
+      //   });
+      // }
+      else if (ResizeAgenda.instance.isIgnorePointerRight.value ||
+          (xPosition <= appointmentView.appointmentRect!.right &&
+              xPosition >= appointmentView.appointmentRect!.right - padding)) {
         setState(() {
           _mouseCursor = SystemMouseCursors.resizeRight;
         });
@@ -11291,7 +11299,8 @@ class _CalendarViewState extends State<_CalendarView>
               appointmentView.appointmentRect!.right >= x &&
               appointmentView.appointmentRect!.top <= y &&
               appointmentView.appointmentRect!.bottom >= y) ||
-          ResizeAgenda.instance.isIgnorePointer.value) {
+          ResizeAgenda.instance.isIgnorePointer.value ||
+          ResizeAgenda.instance.isIgnorePointerRight.value) {
         selectedAppointmentView = appointmentView;
         break;
       }
