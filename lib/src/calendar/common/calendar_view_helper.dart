@@ -839,6 +839,10 @@ class AppointmentView {
   /// Defines the resource view index of the appointment.
   int resourceIndex = -1;
 
+  bool pathRight = false;
+
+  bool pathLeft = false;
+
   /// Clones and return new instance of the appointment view.
   AppointmentView clone() {
     return AppointmentView()
@@ -850,7 +854,9 @@ class AppointmentView {
       ..position = position
       ..maxPositions = maxPositions
       ..isSpanned = isSpanned
-      ..resourceIndex = resourceIndex;
+      ..resourceIndex = resourceIndex
+      ..pathRight = pathRight
+      ..pathLeft = pathLeft;
   }
 }
 
@@ -1287,12 +1293,35 @@ class ResizeAgenda extends ChangeNotifier {
   /// Constructor to create the ResizeAgenda to trigger drag.
   ResizeAgenda._internal();
 
+  ValueNotifier<List<IgnorePathPointer>> ignorePointerList =
+      ValueNotifier(<IgnorePathPointer>[]);
+
   /// Holds the boolean to ignore pointer or not.
   ValueNotifier<bool> isIgnorePointer = ValueNotifier(false);
 
   /// Holds the boolean to ignore pointer or not.
   ValueNotifier<bool> isIgnorePointerRight = ValueNotifier(false);
 
+  ///Holds current  active resize path
+  ValueNotifier<int?> currentActivePath = ValueNotifier(null);
+
   /// constructor
   static final ResizeAgenda instance = ResizeAgenda._internal();
+}
+
+class IgnorePathPointer {
+  /// Holds the boolean to ignore pointer or not.
+  bool right = false;
+
+  /// Holds the boolean to ignore pointer or not.
+  bool left = false;
+}
+
+///Creates resize Path
+class ResizePath {
+  ///Creates left resize path button
+  final leftPath = Path();
+
+  ///Creates right resize path button
+  final rightPath = Path();
 }

@@ -10783,6 +10783,7 @@ class _CalendarViewState extends State<_CalendarView>
       print(
           "ResizeAgenda.instance.isIgnorePointer.value CalendarView: ${ResizeAgenda.instance.isIgnorePointer.value}");
       if (ResizeAgenda.instance.isIgnorePointer.value ||
+          appointmentView.pathLeft ||
           (xPosition >= appointmentView.appointmentRect!.left &&
               xPosition <= appointmentView.appointmentRect!.left + padding)) {
         setState(() {
@@ -10810,6 +10811,7 @@ class _CalendarViewState extends State<_CalendarView>
       //   });
       // }
       else if (ResizeAgenda.instance.isIgnorePointerRight.value ||
+          appointmentView.pathRight ||
           (xPosition <= appointmentView.appointmentRect!.right &&
               xPosition >= appointmentView.appointmentRect!.right - padding)) {
         setState(() {
@@ -11300,7 +11302,9 @@ class _CalendarViewState extends State<_CalendarView>
               appointmentView.appointmentRect!.top <= y &&
               appointmentView.appointmentRect!.bottom >= y) ||
           ResizeAgenda.instance.isIgnorePointer.value ||
-          ResizeAgenda.instance.isIgnorePointerRight.value) {
+          ResizeAgenda.instance.isIgnorePointerRight.value ||
+          appointmentView.pathLeft ||
+          appointmentView.pathRight) {
         selectedAppointmentView = appointmentView;
         break;
       }

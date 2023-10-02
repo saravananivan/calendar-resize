@@ -309,6 +309,7 @@ class _AppointmentLayoutState extends State<AppointmentLayout> {
 
   AppointmentView? _getAppointmentViewOnPoint(double x, double y) {
     if (_appointmentCollection.isEmpty) {
+      ResizeAgenda.instance.currentActivePath.value = null;
       return null;
     }
 
@@ -330,11 +331,23 @@ class _AppointmentLayoutState extends State<AppointmentLayout> {
               appointmentView.appointmentRect!.right >= x &&
               appointmentView.appointmentRect!.top <= y &&
               appointmentView.appointmentRect!.bottom >= y) ||
-          ResizeAgenda.instance.isIgnorePointer.value ||
-          ResizeAgenda.instance.isIgnorePointerRight.value) {
+          appointmentView.pathLeft ||
+          appointmentView.pathRight) {
+        //     ||
+        // ResizeAgenda.instance.isIgnorePointer.value ||
+        // ResizeAgenda.instance.isIgnorePointerRight.value) {
+        ResizeAgenda.instance.currentActivePath.value = i;
+        print(
+            "ResizeAgenda.instance.currentActivePath.value: ${ResizeAgenda.instance.currentActivePath.value}");
+        print("Selected AppointMent int: $i");
         selectedAppointmentView = appointmentView;
+
         break;
       }
+    }
+
+    if (selectedAppointmentView == null) {
+      ResizeAgenda.instance.currentActivePath.value = null;
     }
 
     if (selectedAppointmentView == null &&
@@ -1466,8 +1479,10 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
     markNeedsLayout();
   }
 
-  late Path? reSizePath;
-  late Path? reSizePathRight;
+  // late Path? reSizePath;
+  // late Path? reSizePathRight;
+
+  List<ResizePath> reSizePathList = <ResizePath>[];
 
   //Path? _reSizePath;
   // Path get reSizePath => _reSizePath ?? Path();
@@ -1500,28 +1515,78 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
     // RenderBox? child = firstChild;
     // print('child == null: ${child == null}');
     // if (child == null) {
+    //   print("Render FirstChild: $child");
     //   return false;
     // }
 
-    if (reSizePath != null) {
-      print('reSizePath != null : ${reSizePath != null}');
-      // print('hitTestSelf........... ${reSizePath!.contains(position)}');
-      print(reSizePath!.getBounds());
-      print('position : $position');
-      ResizeAgenda.instance.isIgnorePointer.value =
-          reSizePath!.contains(position);
-      //return true; // reSizePath!.contains(position);
+    // if (reSizePath != null) {
+    //   print('reSizePath != null : ${reSizePath != null}');
+    //   // print('hitTestSelf........... ${reSizePath!.contains(position)}');
+    //   print("getBounds: ${reSizePath!.getBounds()}");
+    //   print("position: $position");
+    //   print('position : ${reSizePath!.contains(position)}');
+    //   ResizeAgenda.instance.isIgnorePointer.value =
+    //       reSizePath!.contains(position);
+    //   //return reSizePath!.contains(position);
+    // }
+    // if (reSizePathRight != null) {
+    //   print('reSizePathRight != null : ${reSizePathRight != null}');
+    //   print("getBounds: ${reSizePathRight!.getBounds()}");
+    //   print("reSizePathRight - position: $position");
+    //   print(
+    //       'reSizePathRight -position : ${reSizePathRight!.contains(position)}');
+    //   ResizeAgenda.instance.isIgnorePointerRight.value =
+    //       reSizePathRight!.contains(position);
+    //   //return reSizePathRight!.contains(position);
+    // }
+
+    final activeAppointment = ResizeAgenda.instance.currentActivePath.value;
+    print("HitTest-activeAppointment : $activeAppointment");
+    if (activeAppointment != null) {
+      // ResizeAgenda.instance.isIgnorePointer.value =
+      //     reSizePathList[activeAppointment].leftPath.contains(position);
+      // print(
+      //     "hittest -- left: ${reSizePathList[activeAppointment].leftPath.contains(position)} ");
+      // ResizeAgenda.instance.isIgnorePointerRight.value =
+      //     reSizePathList[activeAppointment].rightPath.contains(position);
+      // print(
+      //     "hittest -- right: ${reSizePathList[activeAppointment].rightPath.contains(position)}");
+
+      // ResizeAgenda.instance.ignorePointerList.value[activeAppointment].left =
+      //     reSizePathList[activeAppointment].leftPath.contains(position);
+
+      // ResizeAgenda.instance.ignorePointerList.value[activeAppointment].right =
+      //     reSizePathList[activeAppointment].rightPath.contains(position);
+    } else {
+      ResizeAgenda.instance.isIgnorePointer.value = false;
+      ResizeAgenda.instance.isIgnorePointerRight.value = false;
     }
-    if (reSizePathRight != null) {
-      print('reSizePathRight != null : ${reSizePathRight != null}');
-      print('position : $position');
-      ResizeAgenda.instance.isIgnorePointerRight.value =
-          reSizePathRight!.contains(position);
-      // return true;
+
+    for (int i = 0; i < appointmentCollection.length; i++) {
+      final AppointmentView appointmentView = appointmentCollection[i];
+      if (appointmentView.appointment == null ||
+          appointmentView.appointmentRect == null) {
+        continue;
+      }
+
+      appointmentView.pathLeft = reSizePathList[i].leftPath.contains(position);
+      appointmentView.pathRight =
+          reSizePathList[i].rightPath.contains(position);
+
+      print("appointmentView.pathLeft : ${appointmentView.pathLeft}");
+      print("appointmentView.pathRight: ${appointmentView.pathRight}");
+
+      if (appointmentView.pathLeft || appointmentView.pathRight) {
+        return true;
+      }
     }
 
     if (ResizeAgenda.instance.isIgnorePointer.value ||
         ResizeAgenda.instance.isIgnorePointerRight.value) {
+      ResizeAgenda.instance.currentActivePath.value = null;
+      // Added to reset there are no agenda's selected
+      // ResizeAgenda.instance.isIgnorePointer.value = false;
+      // ResizeAgenda.instance.isIgnorePointerRight.value = false;
       return true;
     }
 
@@ -2500,9 +2565,12 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
     final bool useMobilePlatformUI =
         CalendarViewHelper.isMobileLayoutUI(size.width, isMobilePlatform);
 
-    reSizePath = Path();
-    reSizePathRight = Path();
+    // reSizePath = Path();
+    // reSizePathRight = Path();
+    reSizePathList.clear();
     for (int i = 0; i < appointmentCollection.length; i++) {
+      reSizePathList.add(ResizePath());
+
       final AppointmentView appointmentView = appointmentCollection[i];
       if (appointmentView.canReuse ||
           appointmentView.appointmentRect == null ||
@@ -2514,35 +2582,9 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
       final RRect appointmentRect = appointmentView.appointmentRect!;
 
       paint.color = appointment.color;
-      //Actual Code
       canvas.drawRRect(appointmentRect, paint);
 
-      // reSizePath = Path();
-
-      // reSizePath!.moveTo(appointmentRect.left, appointmentRect.bottom);
-      // reSizePath!.lineTo(appointmentRect.left, appointmentRect.top);
-
-      //final p2 = Path();
-      // paint.style = PaintingStyle.stroke;
-
-      // p2.moveTo(appointmentRect.left, appointmentRect.top);
-      // p2.lineTo(appointmentRect.right, appointmentRect.top);
-      // p2.lineTo(appointmentRect.right, appointmentRect.bottom);
-      // p2.lineTo(appointmentRect.left, appointmentRect.bottom);
-      //p2.addPath(reSizePath!, Offset.zero);
-
-      // final reSizePathPaint = Paint();
-      // reSizePathPaint.style = PaintingStyle.stroke;
-      // reSizePathPaint.color = Colors.red;
-      // canvas.drawPath(p2, paint);
-      // canvas.drawPath(reSizePath!, reSizePathPaint);
-
-      reSizePath = Path();
-
-      // reSizePath!.addRRect(appointmentRect);
-      // canvas.drawPath(reSizePath!, paint);
-
-      reSizePath!.addArc(
+      reSizePathList[i].leftPath.addArc(
           Rect.fromCenter(
               center: Offset(appointmentRect.left,
                   appointmentRect.bottom - (appointmentRect.height * 0.6)),
@@ -2551,10 +2593,10 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
           0,
           2 * math.pi);
 
-      canvas.drawPath(reSizePath!, Paint()..color = Colors.black);
+      canvas.drawPath(
+          reSizePathList[i].leftPath, Paint()..color = Colors.black);
 
-      reSizePathRight = Path();
-      reSizePathRight!.addArc(
+      reSizePathList[i].rightPath.addArc(
           Rect.fromCenter(
               center: Offset(appointmentRect.right,
                   appointmentRect.bottom - (appointmentRect.height * 0.4)),
@@ -2563,22 +2605,34 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
           0,
           2 * math.pi);
 
-      canvas.drawPath(reSizePathRight!, Paint()..color = Colors.black);
+      canvas.drawPath(
+          reSizePathList[i].rightPath, Paint()..color = Colors.black);
 
-      // canvas.drawCircle(
-      //     Offset(appointmentRect.left,
-      //         appointmentRect.top + (appointmentRect.height * 0.8)),
-      //     5,
-      //     Paint()..color = Colors.white);
+      ///To draw reSize Button
+      // reSizePath = Path();
 
-      /* Remove this code
-      // canvas.drawCircle(
-      //     Offset(appointmentRect.right,
-      //         appointmentRect.bottom - (appointmentRect.width * 0.6)),
-      //     5,
-      //     paint);
+      // reSizePath!.addArc(
+      //     Rect.fromCenter(
+      //         center: Offset(appointmentRect.left,
+      //             appointmentRect.bottom - (appointmentRect.height * 0.6)),
+      //         width: 15, //30
+      //         height: 15), //30),
+      //     0,
+      //     2 * math.pi);
 
-      */
+      // canvas.drawPath(reSizePath!, Paint()..color = Colors.black);
+
+      // reSizePathRight = Path();
+      // reSizePathRight!.addArc(
+      //     Rect.fromCenter(
+      //         center: Offset(appointmentRect.right,
+      //             appointmentRect.bottom - (appointmentRect.height * 0.4)),
+      //         width: 15, //30,
+      //         height: 15), //30),
+      //     0,
+      //     2 * math.pi);
+
+      // canvas.drawPath(reSizePathRight!, Paint()..color = Colors.black);
 
       final bool canAddSpanIcon =
           AppointmentHelper.canAddSpanIcon(visibleDates, appointment, view);
@@ -2713,6 +2767,42 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
 
       _updateAppointmentHovering(appointmentRect, canvas);
     }
+
+    // for (int i = 0; i < appointmentCollection.length; i++) {
+    //   final AppointmentView appointmentView = appointmentCollection[i];
+    //   if (appointmentView.canReuse ||
+    //       appointmentView.appointmentRect == null ||
+    //       appointmentView.appointment == null) {
+    //     continue;
+    //   }
+
+    //   final RRect appointmentRect = appointmentView.appointmentRect!;
+
+    //   reSizePath = Path();
+
+    //   reSizePath!.addArc(
+    //       Rect.fromCenter(
+    //           center: Offset(appointmentRect.left,
+    //               appointmentRect.bottom - (appointmentRect.height * 0.6)),
+    //           width: 15, //30
+    //           height: 15), //30),
+    //       0,
+    //       2 * math.pi);
+
+    //   canvas.drawPath(reSizePath!, Paint()..color = Colors.black);
+
+    //   reSizePathRight = Path();
+    //   reSizePathRight!.addArc(
+    //       Rect.fromCenter(
+    //           center: Offset(appointmentRect.right,
+    //               appointmentRect.bottom - (appointmentRect.height * 0.4)),
+    //           width: 15, //30,
+    //           height: 15), //30),
+    //       0,
+    //       2 * math.pi);
+
+    //   canvas.drawPath(reSizePathRight!, Paint()..color = Colors.black);
+    // }
   }
 
   /// To display the different text on spanning appointment for timeline day
