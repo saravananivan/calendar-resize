@@ -1295,30 +1295,3 @@ abstract class CustomCalendarRenderObject extends RenderBox
   /// Returns a function that builds semantic information for the render object.
   SemanticsBuilderCallback? get semanticsBuilder => null;
 }
-
-/// Used to hold the ResizeAgenda
-class ResizeAgenda extends ChangeNotifier {
-  /// Constructor to create the ResizeAgenda to trigger drag.
-  ResizeAgenda._internal();
-
-  /// Holds the boolean to ignore pointer or not.
-  ValueNotifier<bool> isIgnorePointer = ValueNotifier(false);
-
-  /// Holds the boolean to ignore pointer or not.
-  ValueNotifier<bool> isIgnorePointerRight = ValueNotifier(false);
-
-  ///Holds current  active resize path
-  ValueNotifier<int?> currentActivePath = ValueNotifier(null);
-
-  /// constructor
-  static final ResizeAgenda instance = ResizeAgenda._internal();
-}
-
-///Creates resize Path
-class ResizePath {
-  ///Creates left resize path button
-  final leftPath = Path();
-
-  ///Creates right resize path button
-  final rightPath = Path();
-}

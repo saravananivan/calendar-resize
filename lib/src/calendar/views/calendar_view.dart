@@ -10755,57 +10755,46 @@ class _CalendarViewState extends State<_CalendarView>
           'xPosition: $xPosition, appointmentView.appointmentRect!.left: ${appointmentView.appointmentRect!.left}');
       print(
           'xPosition: $xPosition, appointmentView.appointmentRect!.left + padding: ${appointmentView.appointmentRect!.left + padding}');
-      // if (xPosition >= appointmentView.appointmentRect!.left &&
-      //     xPosition <= appointmentView.appointmentRect!.left + padding &&
-      //     ((isMonthView &&
-      //             isSameDate(
-      //                 _isRTL ? appointmentEndTime : appointmentStartTime,
-      //                 _isRTL
-      //                     ? appointmentExactEndTime
-      //                     : appointmentExactStartTime)) ||
-      //         (!isMonthView &&
-      //             CalendarViewHelper.isSameTimeSlot(
-      //                 _isRTL ? appointmentEndTime : appointmentStartTime,
-      //                 _isRTL
-      //                     ? appointmentExactEndTime
-      //                     : appointmentExactStartTime))) &&
-      //     ((_isRTL && !canAddForwardSpanIcon) ||
-      //         (!_isRTL && !canAddBackwardSpanIcon))) {
-      //   setState(() {
-      //     _mouseCursor = SystemMouseCursors.resizeLeft;
-      //   });
-      // }
 
       if (appointmentView.isPathLeft ||
           (xPosition >= appointmentView.appointmentRect!.left &&
-              xPosition <= appointmentView.appointmentRect!.left + padding)) {
+                  xPosition <=
+                      appointmentView.appointmentRect!.left + padding) &&
+              ((isMonthView &&
+                      isSameDate(
+                          _isRTL ? appointmentEndTime : appointmentStartTime,
+                          _isRTL
+                              ? appointmentExactEndTime
+                              : appointmentExactStartTime)) ||
+                  (!isMonthView &&
+                      CalendarViewHelper.isSameTimeSlot(
+                          _isRTL ? appointmentEndTime : appointmentStartTime,
+                          _isRTL
+                              ? appointmentExactEndTime
+                              : appointmentExactStartTime))) &&
+              ((_isRTL && !canAddForwardSpanIcon) ||
+                  (!_isRTL && !canAddBackwardSpanIcon))) {
         setState(() {
           _mouseCursor = SystemMouseCursors.resizeLeft;
         });
-      }
-      // else if (xPosition <= appointmentView.appointmentRect!.right &&
-      //     xPosition >= appointmentView.appointmentRect!.right - padding &&
-      //     ((isMonthView &&
-      //             isSameDate(
-      //                 _isRTL ? appointmentStartTime : appointmentEndTime,
-      //                 _isRTL
-      //                     ? appointmentExactStartTime
-      //                     : appointmentExactEndTime)) ||
-      //         (!isMonthView &&
-      //             CalendarViewHelper.isSameTimeSlot(
-      //                 _isRTL ? appointmentStartTime : appointmentEndTime,
-      //                 _isRTL
-      //                     ? appointmentExactStartTime
-      //                     : appointmentExactEndTime))) &&
-      //     ((_isRTL && !canAddBackwardSpanIcon) ||
-      //         (!_isRTL && !canAddForwardSpanIcon))) {
-      //   setState(() {
-      //     _mouseCursor = SystemMouseCursors.resizeRight;
-      //   });
-      // }
-      else if (appointmentView.isPathRight ||
+      } else if (appointmentView.isPathRight ||
           (xPosition <= appointmentView.appointmentRect!.right &&
-              xPosition >= appointmentView.appointmentRect!.right - padding)) {
+                  xPosition >=
+                      appointmentView.appointmentRect!.right - padding) &&
+              ((isMonthView &&
+                      isSameDate(
+                          _isRTL ? appointmentStartTime : appointmentEndTime,
+                          _isRTL
+                              ? appointmentExactStartTime
+                              : appointmentExactEndTime)) ||
+                  (!isMonthView &&
+                      CalendarViewHelper.isSameTimeSlot(
+                          _isRTL ? appointmentStartTime : appointmentEndTime,
+                          _isRTL
+                              ? appointmentExactStartTime
+                              : appointmentExactEndTime))) &&
+              ((_isRTL && !canAddBackwardSpanIcon) ||
+                  (!_isRTL && !canAddForwardSpanIcon))) {
         setState(() {
           _mouseCursor = SystemMouseCursors.resizeRight;
         });
