@@ -6103,8 +6103,6 @@ class _CalendarViewState extends State<_CalendarView>
                 : _mouseCursor;
 
     print("currentCursor : $currentCursor");
-    print(
-        'ResizeAgenda.instance.isIgnorePointer.value : ${ResizeAgenda.instance.isIgnorePointer.value}');
 
     //  return widget.isMobilePlatform
     // ? GestureDetector(
@@ -8552,8 +8550,6 @@ class _CalendarViewState extends State<_CalendarView>
     print(
         ' ignoring: ${_mouseCursor == SystemMouseCursors.basic || _mouseCursor == SystemMouseCursors.move || isAllDayPanel}');
 
-    print(ResizeAgenda.instance.isIgnorePointer.value);
-
     return Positioned(
         left: 0,
         width: overAllWidth,
@@ -10780,10 +10776,7 @@ class _CalendarViewState extends State<_CalendarView>
       //   });
       // }
 
-      print(
-          "ResizeAgenda.instance.isIgnorePointer.value CalendarView: ${ResizeAgenda.instance.isIgnorePointer.value}");
-      if (ResizeAgenda.instance.isIgnorePointer.value ||
-          appointmentView.pathLeft ||
+      if (appointmentView.isPathLeft ||
           (xPosition >= appointmentView.appointmentRect!.left &&
               xPosition <= appointmentView.appointmentRect!.left + padding)) {
         setState(() {
@@ -10810,8 +10803,7 @@ class _CalendarViewState extends State<_CalendarView>
       //     _mouseCursor = SystemMouseCursors.resizeRight;
       //   });
       // }
-      else if (ResizeAgenda.instance.isIgnorePointerRight.value ||
-          appointmentView.pathRight ||
+      else if (appointmentView.isPathRight ||
           (xPosition <= appointmentView.appointmentRect!.right &&
               xPosition >= appointmentView.appointmentRect!.right - padding)) {
         setState(() {
@@ -11301,10 +11293,8 @@ class _CalendarViewState extends State<_CalendarView>
               appointmentView.appointmentRect!.right >= x &&
               appointmentView.appointmentRect!.top <= y &&
               appointmentView.appointmentRect!.bottom >= y) ||
-          ResizeAgenda.instance.isIgnorePointer.value ||
-          ResizeAgenda.instance.isIgnorePointerRight.value ||
-          appointmentView.pathLeft ||
-          appointmentView.pathRight) {
+          appointmentView.isPathLeft ||
+          appointmentView.isPathRight) {
         selectedAppointmentView = appointmentView;
         break;
       }
