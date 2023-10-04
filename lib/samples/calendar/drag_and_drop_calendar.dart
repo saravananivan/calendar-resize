@@ -180,6 +180,7 @@ class _DragAndDropCalendarState extends SampleViewState {
       showNavigationArrow: model.isWebFullView,
       onViewChanged: viewChangedCallback,
       allowDragAndDrop: true,
+      allowAppointmentResize: true,
       showDatePickerButton: true,
       monthViewSettings: const MonthViewSettings(
           appointmentDisplayMode: MonthAppointmentDisplayMode.appointment),

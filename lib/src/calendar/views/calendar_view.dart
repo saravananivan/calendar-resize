@@ -886,7 +886,10 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
         "_handleLongPressStart - appointmentView: ${appointmentView?.appointment?.subject} ");
     print(
         "!isNeedDragAndDrop || appointmentView == null: ${!isNeedDragAndDrop || appointmentView == null}");
-    if (!isNeedDragAndDrop || appointmentView == null) {
+    if (!isNeedDragAndDrop ||
+        appointmentView == null ||
+        (_dragDetails.value.appointmentView?.isPathLeft ?? false) ||
+        (_dragDetails.value.appointmentView?.isPathRight ?? false)) {
       _dragDetails.value.position.value = null;
       return;
     }
@@ -922,7 +925,9 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
       double timeLabelWidth,
       double resourceItemHeight,
       double weekNumberPanelWidth) {
-    if (_dragDetails.value.appointmentView == null) {
+    if (_dragDetails.value.appointmentView == null ||
+        (_dragDetails.value.appointmentView?.isPathLeft ?? false) ||
+        (_dragDetails.value.appointmentView?.isPathRight ?? false)) {
       return;
     }
 
@@ -1952,7 +1957,9 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
       double viewHeaderHeight,
       double timeLabelWidth,
       double weekNumberPanelWidth) {
-    if (_dragDetails.value.appointmentView == null) {
+    if (_dragDetails.value.appointmentView == null ||
+        (_dragDetails.value.appointmentView?.isPathLeft ?? false) ||
+        (_dragDetails.value.appointmentView?.isPathRight ?? false)) {
       return;
     }
 
@@ -2389,7 +2396,7 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
     }
     final _CalendarViewState viewKey = _getCurrentViewByVisibleDates()!;
     if (viewKey._hoveringAppointmentView != null &&
-        // !widget.isMobilePlatform &&
+        !widget.isMobilePlatform &&
         isNeedDragAndDrop) {
       _handleAppointmentDragStart(
           viewKey._hoveringAppointmentView!.clone(),
@@ -4981,6 +4988,7 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
           weekNumberPanelWidth);
       return;
     }
+    print("_onHorizontalUpdate : resize .........");
     switch (widget.calendar.viewNavigationMode) {
       case ViewNavigationMode.none:
         return;
@@ -10838,10 +10846,14 @@ class _CalendarViewState extends State<_CalendarView>
     print(
         'widget.calendar.appointmentBuilder == null: ${widget.calendar.appointmentBuilder}, ${widget.calendar.appointmentBuilder == null}');
     print(
-        '_resizingDetails.value.appointmentView != null || widget.dragDetails.value.appointmentView != null && widget.calendar.appointmentBuilder == null : ${_resizingDetails.value.appointmentView != null || widget.dragDetails.value.appointmentView != null && widget.calendar.appointmentBuilder == null}');
-    if (_resizingDetails.value.appointmentView != null ||
-        widget.dragDetails.value.appointmentView != null &&
-            widget.calendar.appointmentBuilder == null) {
+        '_resizingDetails.value.appointmentView != null || widget.dragDetails.value.appointmentView != null && widget.calendar.appointmentBuilder == null : ${(_resizingDetails.value.appointmentView != null || widget.dragDetails.value.appointmentView != null && widget.calendar.appointmentBuilder == null) && (widget.dragDetails.value.appointmentView?.isPathLeft ?? false) == false && (widget.dragDetails.value.appointmentView?.isPathRight ?? false) == false}');
+    if ((_resizingDetails.value.appointmentView != null ||
+            widget.dragDetails.value.appointmentView != null &&
+                widget.calendar.appointmentBuilder == null) &&
+        (widget.dragDetails.value.appointmentView?.isPathLeft ?? false) ==
+            false &&
+        (widget.dragDetails.value.appointmentView?.isPathRight ?? false) ==
+            false) {
       return;
     }
 
@@ -13830,8 +13842,12 @@ class _DraggingAppointmentState extends State<_DraggingAppointmentWidget> {
   @override
   Widget build(BuildContext context) {
     Widget? child;
-    if (widget.dragDetails.value.appointmentView != null &&
-        widget.calendar.appointmentBuilder != null) {
+    if ((widget.dragDetails.value.appointmentView != null &&
+            widget.calendar.appointmentBuilder != null) &&
+        (widget.dragDetails.value.appointmentView?.isPathLeft ?? false) ==
+            false &&
+        (widget.dragDetails.value.appointmentView?.isPathRight ?? false) ==
+            false) {
       final DateTime date = DateTime(
           _draggingAppointmentView!.appointment!.actualStartTime.year,
           _draggingAppointmentView!.appointment!.actualStartTime.month,
@@ -14268,8 +14284,10 @@ class _DraggingAppointmentRenderObject extends RenderBox
   }
 
   void _drawDefaultUI(Canvas canvas, bool isTimelineView) {
-    if (dragDetails.appointmentView == null ||
-        dragDetails.appointmentView!.appointmentRect == null) {
+    if ((dragDetails.appointmentView == null ||
+            dragDetails.appointmentView!.appointmentRect == null) ||
+        (dragDetails.appointmentView?.isPathLeft ?? false) == true ||
+        (dragDetails.appointmentView?.isPathRight ?? false) == true) {
       return;
     }
 

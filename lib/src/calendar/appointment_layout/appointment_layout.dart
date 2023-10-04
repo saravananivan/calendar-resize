@@ -1482,9 +1482,10 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
         continue;
       }
 
-      appointmentView.isPathLeft = appointmentView.pathLeft!.contains(position);
+      appointmentView.isPathLeft =
+          appointmentView.pathLeft?.contains(position) ?? false;
       appointmentView.isPathRight =
-          appointmentView.pathRight!.contains(position);
+          appointmentView.pathRight?.contains(position) ?? false;
 
       print('appointmentView.pathLeft : ${appointmentView.isPathLeft}');
       print('appointmentView.pathRight: ${appointmentView.isPathRight}');
@@ -1597,6 +1598,7 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
   bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
     print("calling hitTestChildren .......... ");
     RenderBox? child = firstChild;
+    print("Children child == null : ${child == null}");
     if (child == null) {
       return false;
     }
