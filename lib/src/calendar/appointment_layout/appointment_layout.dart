@@ -1486,6 +1486,10 @@ class _AppointmentRenderObject extends CustomCalendarRenderObject {
           appointmentView.pathLeft?.contains(position) ?? false;
       appointmentView.isPathRight =
           appointmentView.pathRight?.contains(position) ?? false;
+      print(
+          'appointmentView.isPathLeft[$i]: ${appointmentView.pathLeft?.contains(position) ?? false} ');
+      print(
+          'appointmentView.isPathRight[$i]: ${appointmentView.pathRight?.contains(position) ?? false} ');
 
       print('appointmentView.pathLeft : ${appointmentView.isPathLeft}');
       print('appointmentView.pathRight: ${appointmentView.isPathRight}');

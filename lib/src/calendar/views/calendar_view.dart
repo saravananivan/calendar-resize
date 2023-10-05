@@ -883,13 +883,17 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
     AppointmentView? appointmentView =
         _getDragAppointment(details, currentState);
     print(
-        "_handleLongPressStart - appointmentView: ${appointmentView?.appointment?.subject} ");
+        '_handleLongPressStart - appointmentView: ${appointmentView?.appointment?.subject} ');
     print(
-        "!isNeedDragAndDrop || appointmentView == null: ${!isNeedDragAndDrop || appointmentView == null}");
+        '!isNeedDragAndDrop || appointmentView == null: ${!isNeedDragAndDrop || appointmentView == null}');
+    print(
+        '(_dragDetails.value.appointmentView?.isPathLeft ?? false) : ${_dragDetails.value.appointmentView?.isPathLeft ?? false}');
+    print(
+        '(_dragDetails.value.appointmentView?.isPathRight ?? false): ${_dragDetails.value.appointmentView?.isPathRight ?? false}');
     if (!isNeedDragAndDrop ||
         appointmentView == null ||
-        (_dragDetails.value.appointmentView?.isPathLeft ?? false) ||
-        (_dragDetails.value.appointmentView?.isPathRight ?? false)) {
+        appointmentView.isPathLeft ||
+        appointmentView.isPathRight) {
       _dragDetails.value.position.value = null;
       return;
     }
@@ -11249,7 +11253,23 @@ class _CalendarViewState extends State<_CalendarView>
   // void _mobilePointerExitEvent(PointerUpEvent event) {
   void _mobilePointerExitEvent(TapUpDetails event) {
     // print("_mobilePointerExitEvent, ${event.position}");
-    print("_mobilePointerExitEvent, ${event.globalPosition}");
+    print('_mobilePointerExitEvent, ${event.globalPosition}');
+    // if (_hoveringAppointmentView == null) {
+    //   print(
+    //       '_hoveringAppointmentView : ${_resizingDetails.value.appointmentView == null}');
+    // }
+    // if (_hoveringAppointmentView != null) {
+    //   setState(() {
+    //     _hoveringAppointmentView!.isPathLeft = false;
+    //     _hoveringAppointmentView!.isPathRight = false;
+    //   });
+
+    //   print(
+    //       '_hoveringAppointmentView.isPathLeft : ${_hoveringAppointmentView!.isPathLeft}');
+    //   print(
+    //       '_hoveringAppointmentView.isPathRight : ${_hoveringAppointmentView!.isPathRight}');
+    // }
+
     _hoveringDate = null;
     _calendarCellNotifier.value = null;
     _viewHeaderNotifier.value = null;
